@@ -94,7 +94,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS CHANGES LICENSE README TODO
 %{_bindir}/sphinx-*
 %{python_sitelib}/sphinx
-%if 0%{?fedora} >= 9
+%if 0%{?fedora} >= 8
 %{python_sitelib}/*.egg-info
 %endif
 
