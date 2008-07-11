@@ -49,7 +49,7 @@ the Python docs:
 
 
 %package       doc
-Summary:       Documentation for ${name}
+Summary:       Documentation for %{name}
 Group:         Documentation
 License:       BSD
 Requires:      %{name} = %{version}-%{release}
