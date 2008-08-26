@@ -4,7 +4,7 @@
 %define upstream_name Sphinx
 
 Name:           python-sphinx
-Version:        0.3
+Version:        0.4.2
 Release:        1%{?dist}
 Summary:        Python documentation generator
 
@@ -104,6 +104,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 25 2008 Michel Salim <salimma@fedoraproject.org> - 0.4.2-1
+- Update to 0.4.2
+
 * Mon May 26 2008 Michel Salim <salimma@fedoraproject.org> - 0.3-1
 - Update to 0.3
 
