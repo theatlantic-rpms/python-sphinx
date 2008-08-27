@@ -94,9 +94,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS CHANGES LICENSE README TODO
 %{_bindir}/sphinx-*
 %{python_sitelib}/sphinx
-%if 0%{?fedora} >= 8
 %{python_sitelib}/*.egg-info
-%endif
 
 %files doc
 %defattr(-,root,root,-)
@@ -104,6 +102,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 27 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.4.2-1.1
+- Fix for EL-5 build.
+
 * Mon Aug 25 2008 Michel Salim <salimma@fedoraproject.org> - 0.4.2-1
 - Update to 0.4.2
 
