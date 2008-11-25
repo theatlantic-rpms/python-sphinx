@@ -4,7 +4,7 @@
 %define upstream_name Sphinx
 
 Name:           python-sphinx
-Version:        0.4.3
+Version:        0.5
 Release:        1%{?dist}
 Summary:        Python documentation generator
 
@@ -84,12 +84,17 @@ rm -rf $RPM_BUILD_ROOT
 sed -i 's|\r||g' LICENSE
 %{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
 
+# Language files; not under /usr/share, need to be handled manually
+(cd $RPM_BUILD_ROOT && find . -name 'sphinx.mo') | sed -e 's|^.||' | sed -e \
+  's:\(.*/locale/\)\([^/_]\+\)\(.*\.mo$\):%lang(\2) \1\2\3:' \
+  >> %{name}.lang
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS CHANGES LICENSE README TODO
 %{_bindir}/sphinx-*
@@ -102,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Nov 24 2008 Michel Salim <salimma@fedoraproject.org> - 0.5-1
+- Update to 0.5
+
 * Fri Oct 10 2008 Michel Salim <salimma@fedoraproject.org> - 0.4.3-1
 - Update to 0.4.3
 
