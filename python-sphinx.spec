@@ -4,8 +4,8 @@
 %define upstream_name Sphinx
 
 Name:           python-sphinx
-Version:        0.5
-Release:        2%{?dist}
+Version:        0.5.1
+Release:        1%{?dist}
 Summary:        Python documentation generator
 
 Group:          Development/Tools
@@ -107,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jan  2 2009 Michel Salim <salimma@fedoraproject.org> - 0.5.1-1
+- Update to 0.5.1
+
 * Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 0.5-2
 - Rebuild for Python 2.6
 
