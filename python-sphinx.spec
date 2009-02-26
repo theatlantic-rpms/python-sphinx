@@ -5,7 +5,7 @@
 
 Name:           python-sphinx
 Version:        0.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python documentation generator
 
 Group:          Development/Tools
@@ -107,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.5.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Fri Jan  2 2009 Michel Salim <salimma@fedoraproject.org> - 0.5.1-1
 - Update to 0.5.1
 
