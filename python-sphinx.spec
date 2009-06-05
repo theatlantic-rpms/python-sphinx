@@ -5,13 +5,14 @@
 
 Name:           python-sphinx
 Version:        0.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python documentation generator
 
 Group:          Development/Tools
 License:        BSD
 URL:            http://sphinx.pocoo.org/
 Source0:        http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
+Patch0:         %{name}-setuptools.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -68,6 +69,7 @@ This package contains documentation in rST and HTML formats
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
+%patch0 -p0 -b .setuptools
 
 
 %build
@@ -107,6 +109,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jun 05 2009 Luke Macken <lmacken@redhat.com> - 0.6.1-2
+- Add a patch to use our own setuptools package
+
 * Fri Apr 17 2009 Michel Salim <salimma@fedoraproject.org> - 0.6.1-1
 - Update to 0.6.1
 
