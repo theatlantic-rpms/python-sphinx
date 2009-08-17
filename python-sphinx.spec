@@ -4,8 +4,8 @@
 %define upstream_name Sphinx
 
 Name:           python-sphinx
-Version:        0.6.1
-Release:        3%{?dist}
+Version:        0.6.2
+Release:        1%{?dist}
 Summary:        Python documentation generator
 
 Group:          Development/Tools
@@ -109,6 +109,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 17 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.6.2-1
+- Update to 0.6.2 -- upstream bugfix requested inside bz#512438
+
 * Sun Jul 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
