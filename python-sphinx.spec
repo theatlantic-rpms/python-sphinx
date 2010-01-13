@@ -4,7 +4,7 @@
 %define upstream_name Sphinx
 
 Name:           python-sphinx
-Version:        0.6.3
+Version:        0.6.4
 Release:        1%{?dist}
 Summary:        Python documentation generator
 
@@ -109,6 +109,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jan 13 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.6.4-1
+- Update to 0.6.4
+- Fixes a problem using autodoc with pylons projects.
+
 * Fri Sep  4 2009 Michel Salim <salimma@fedoraproject.org> - 0.6.3-1
 - Update to 0.6.3
 
