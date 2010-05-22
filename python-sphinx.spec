@@ -1,23 +1,31 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
+%if ! (0%{?fedora} > 12 || 0%{?rhel} > 5)
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 
-%define upstream_name Sphinx
+%global upstream_name Sphinx
 
-Name:           python-sphinx
-Version:        0.6.4
-Release:        1%{?dist}
-Summary:        Python documentation generator
+Name:       python-sphinx
+Version:    0.6.5
+Release:    2%{?dist}
+Summary:    Python documentation generator
 
-Group:          Development/Tools
-License:        BSD
-URL:            http://sphinx.pocoo.org/
-Source0:        http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
-Patch0:         %{name}-setuptools.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Group:      Development/Tools
+License:    BSD
+URL:        http://sphinx.pocoo.org/
+Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
+Patch0:     %{name}-0.6.5_setuptools.patch
+Patch1:     %{name}-0.6.5_move_locale_files_outside_sitelib.patch
 
-BuildArch:      noarch
-BuildRequires:  python-devel python-docutils python-jinja2 python-setuptools
-Requires:       python-docutils python-jinja2 python-pygments
+BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildArch:     noarch
+BuildRequires: python2-devel >= 2.4
+BuildRequires: python-setuptools
+BuildRequires: python-docutils
+BuildRequires: python-jinja2
+BuildRequires: python-nose
+Requires:      python-docutils
+Requires:      python-jinja2
+Requires:      python-pygments
 
 
 %description
@@ -49,14 +57,14 @@ the Python docs:
       snippets and inclusion of appropriately formatted docstrings.
 
 
-%package       doc
-Summary:       Documentation for %{name}
-Group:         Documentation
-License:       BSD
-Requires:      %{name} = %{version}-%{release}
+%package doc
+Summary:    Documentation for %{name}
+Group:      Documentation
+License:    BSD
+Requires:   %{name} = %{version}-%{release}
 
 
-%description   doc
+%description doc
 Sphinx is a tool that makes it easy to create intelligent and
 beautiful documentation for Python projects (or other documents
 consisting of multiple reStructuredText sources), written by Georg
@@ -64,51 +72,101 @@ Brandl. It was originally created to translate the new Python
 documentation, but has now been cleaned up in the hope that it will be
 useful to many other projects.
 
-This package contains documentation in rST and HTML formats
+This package contains documentation in reST and HTML formats.
 
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
-%patch0 -p0 -b .setuptools
+%patch0 -p1 -b .setuptools
+%patch1 -p1 -b .language_files
 
+sed '1d' -i sphinx/pycode/pgen2/token.py
 
 %build
 %{__python} setup.py build
-cd doc
+pushd doc
 make html
+rm -rf _build/html/.buildinfo
 mv _build/html ..
 rm -rf _*
+popd
 
 
 %install
-rm -rf $RPM_BUILD_ROOT
-# Fix EOL delimiters
-sed -i 's|\r||g' LICENSE
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
-# Language files; not under /usr/share, need to be handled manually
-(cd $RPM_BUILD_ROOT && find . -name 'sphinx.mo') | sed -e 's|^.||' | sed -e \
-  's:\(.*/locale/\)\([^/_]\+\)\(.*\.mo$\):%lang(\2) \1\2\3:' \
-  >> %{name}.lang
+%{__python} setup.py install --skip-build --root %{buildroot}
+
+
+pushd doc
+# Deliver man pages
+install -d %{buildroot}%{_mandir}/man1
+mv sphinx-*.1 %{buildroot}%{_mandir}/man1/
+popd
+
+# Deliver rst files
+mv doc reST
+
+# Move language files to /usr/share in association with %patch1
+pushd %{buildroot}%{python_sitelib}
+
+for lang in `find sphinx/locale -maxdepth 1 -mindepth 1 -type d -printf "%f "`;
+do
+  install -d %{buildroot}%{_datadir}/sphinx/locale/$lang
+  install -d %{buildroot}%{_datadir}/locale/$lang/LC_MESSAGES
+  mv sphinx/locale/$lang/LC_MESSAGES/sphinx.js \
+     %{buildroot}%{_datadir}/sphinx/locale/$lang/
+  mv sphinx/locale/$lang/LC_MESSAGES/sphinx.mo \
+    %{buildroot}%{_datadir}/locale/$lang/LC_MESSAGES/
+  rm -rf sphinx/locale/$lang
+done
+popd
+%find_lang sphinx
+
+# Language files; Since these are javascript, it's not immediately obvious to
+# find_lang that they need to be marked with a language.
+(cd %{buildroot} && find . -name 'sphinx.js') | sed -e 's|^.||' | sed -e \
+  's:\(.*/locale/\)\([^/_]\+\)\(.*\.js$\):%lang(\2) \1\2\3:' \
+  >> sphinx.lang
 
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
-%files -f %{name}.lang
+%check
+make test
+
+
+%files -f sphinx.lang
 %defattr(-,root,root,-)
-%doc AUTHORS CHANGES LICENSE README TODO
+%doc AUTHORS CHANGES EXAMPLES LICENSE README TODO
 %{_bindir}/sphinx-*
-%{python_sitelib}/sphinx
-%{python_sitelib}/*.egg-info
+%{python_sitelib}/*
+%{_datadir}/sphinx/
+%exclude %{_datadir}/sphinx/locale/*/sphinx.js
+%{_mandir}/man1/*
 
 %files doc
 %defattr(-,root,root,-)
-%doc doc html
+%doc html reST
 
 
 %changelog
+* Fri May 21 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.6.5-2
+- Few minor tweaks to Gareth's spec file update
+
+* Mon May 10 2010 Gareth Armstrong <gareth.armstrong@hp.com> - 0.6.5-1.hp
+- Update to 0.6.5
+- Initial import of python-sphinx from Fedora Rawhide for use in HP CMS
+- Enforce that Sphinx requires Python 2.4 or later via an explicit BR
+- Minor tweaks to spec file
+- Move language files to %%{_datadir}, idea borrowed from Debian's sphinx
+  package
+- Deliver man pages for sphinx-build & sphinx-quickstart
+- Deliver rst documentation files to reST directory in doc sub-package
+- Add %%check section for Python2 and add BR on python-nose
+
 * Wed Jan 13 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.6.4-1
 - Update to 0.6.4
 - Fixes a problem using autodoc with pylons projects.
