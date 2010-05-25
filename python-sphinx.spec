@@ -3,18 +3,17 @@
 %endif
 
 %global upstream_name Sphinx
+%global prerel b1
 
 Name:       python-sphinx
-Version:    0.6.5
-Release:    2%{?dist}
+Version:    1.0
+Release:    %{?prerel:0.}1.%{?prerel}%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
 License:    BSD
 URL:        http://sphinx.pocoo.org/
-Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
-Patch0:     %{name}-0.6.5_setuptools.patch
-Patch1:     %{name}-0.6.5_move_locale_files_outside_sitelib.patch
+Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}%{?prerel}.tar.gz
 
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch:     noarch
@@ -76,10 +75,7 @@ This package contains documentation in reST and HTML formats.
 
 
 %prep
-%setup -q -n %{upstream_name}-%{version}
-%patch0 -p1 -b .setuptools
-%patch1 -p1 -b .language_files
-
+%setup -q -n %{upstream_name}-%{version}%{?prerel}
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
 %build
@@ -98,11 +94,12 @@ rm -rf %{buildroot}
 %{__python} setup.py install --skip-build --root %{buildroot}
 
 
-pushd doc
+# Manpages not in beta release yet
+#pushd doc
 # Deliver man pages
-install -d %{buildroot}%{_mandir}/man1
-mv sphinx-*.1 %{buildroot}%{_mandir}/man1/
-popd
+#install -d %{buildroot}%{_mandir}/man1
+#mv sphinx-*.1 %{buildroot}%{_mandir}/man1/
+#popd
 
 # Deliver rst files
 mv doc reST
@@ -145,7 +142,7 @@ make test
 %{python_sitelib}/*
 %{_datadir}/sphinx/
 %exclude %{_datadir}/sphinx/locale/*/sphinx.js
-%{_mandir}/man1/*
+#%{_mandir}/man1/*
 
 %files doc
 %defattr(-,root,root,-)
@@ -153,6 +150,12 @@ make test
 
 
 %changelog
+* Wed May 26 2010 Michel Salim <salimma@fedoraproject.org> - 1.0-0.1.b1
+- Update to 1.0 beta 1
+
+* Tue May 25 2010 Michel Salim <salimma@fedoraproject.org> - 0.6.6-1
+- Update to 0.6.6
+
 * Fri May 21 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.6.5-2
 - Few minor tweaks to Gareth's spec file update
 
