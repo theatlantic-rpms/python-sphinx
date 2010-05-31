@@ -3,7 +3,7 @@
 %endif
 
 %global upstream_name Sphinx
-%global prerel b1
+%global prerel b2
 
 Name:       python-sphinx
 Version:    1.0
@@ -150,6 +150,10 @@ make test
 
 
 %changelog
+* Mon May 31 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 1.0-0.2.b2
+- Update to 1.0 beta 2
+- Fixes problem building html documentation in non-English locales
+
 * Wed May 26 2010 Michel Salim <salimma@fedoraproject.org> - 1.0-0.1.b1
 - Update to 1.0 beta 1
 
