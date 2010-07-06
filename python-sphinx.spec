@@ -11,7 +11,12 @@ Release:    %{?prerel:0.}1.%{?prerel}%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
-License:    BSD
+
+# Unless otherwise noted, the license for code is BSD
+# sphinx/util/stemmer.py Public Domain
+# sphinx/pycode/pgen2 Python
+# jquery (MIT or GPLv2)
+License: BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}%{?prerel}.tar.gz
 
