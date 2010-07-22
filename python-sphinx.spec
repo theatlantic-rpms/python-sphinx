@@ -7,7 +7,7 @@
 
 Name:       python-sphinx
 Version:    1.0
-Release:    %{?prerel:0.}1.%{?prerel}%{?dist}
+Release:    %{?prerel:0.}1.%{?prerel}%{?dist}.1
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -155,6 +155,9 @@ make test
 
 
 %changelog
+* Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 1.0-0.1.b2.1
+- Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
+
 * Mon May 31 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 1.0-0.2.b2
 - Update to 1.0 beta 2
 - Fixes problem building html documentation in non-English locales
