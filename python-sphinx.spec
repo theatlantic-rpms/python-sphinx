@@ -3,11 +3,10 @@
 %endif
 
 %global upstream_name Sphinx
-%global prerel b2
 
 Name:       python-sphinx
-Version:    1.0
-Release:    %{?prerel:0.}1.%{?prerel}%{?dist}.1
+Version:    1.0.4
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -16,11 +15,10 @@ Group:      Development/Tools
 # sphinx/util/stemmer.py Public Domain
 # sphinx/pycode/pgen2 Python
 # jquery (MIT or GPLv2)
-License: BSD and Public Domain and Python and (MIT or GPLv2)
+License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
-Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}%{?prerel}.tar.gz
+Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 
-BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
 BuildRequires: python-setuptools
@@ -132,10 +130,6 @@ popd
   >> sphinx.lang
 
 
-%clean
-rm -rf %{buildroot}
-
-
 %check
 make test
 
@@ -155,6 +149,10 @@ make test
 
 
 %changelog
+* Fri Sep 17 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-1
+- Update to 1.0.4
+- Remove BuildRoot and %%clean declarations
+
 * Thu Jul 22 2010 David Malcolm <dmalcolm@redhat.com> - 1.0-0.1.b2.1
 - Rebuilt for https://fedoraproject.org/wiki/Features/Python_2.7/MassRebuild
 
