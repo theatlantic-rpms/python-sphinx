@@ -6,7 +6,7 @@
 
 Name:       python-sphinx
 Version:    1.0.4
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -85,9 +85,9 @@ sed '1d' -i sphinx/pycode/pgen2/token.py
 %{__python} setup.py build
 pushd doc
 make html
+make man
 rm -rf _build/html/.buildinfo
 mv _build/html ..
-rm -rf _*
 popd
 
 
@@ -97,14 +97,14 @@ rm -rf %{buildroot}
 %{__python} setup.py install --skip-build --root %{buildroot}
 
 
-# Manpages not in beta release yet
-#pushd doc
+pushd doc
 # Deliver man pages
-#install -d %{buildroot}%{_mandir}/man1
-#mv sphinx-*.1 %{buildroot}%{_mandir}/man1/
-#popd
+install -d %{buildroot}%{_mandir}/man1
+mv _build/man/sphinx-*.1 %{buildroot}%{_mandir}/man1/
+popd
 
 # Deliver rst files
+rm -rf doc/_*
 mv doc reST
 
 # Move language files to /usr/share in association with %patch1
@@ -139,9 +139,10 @@ make test
 %doc AUTHORS CHANGES EXAMPLES LICENSE README TODO
 %{_bindir}/sphinx-*
 %{python_sitelib}/*
-%{_datadir}/sphinx/
-%exclude %{_datadir}/sphinx/locale/*/sphinx.js
-#%{_mandir}/man1/*
+%dir %{_datadir}/sphinx/
+%dir %{_datadir}/sphinx/locale
+%dir %{_datadir}/sphinx/locale/*
+%{_mandir}/man1/*
 
 %files doc
 %defattr(-,root,root,-)
@@ -149,6 +150,10 @@ make test
 
 
 %changelog
+* Mon Nov  1 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-2
+- Actually include *.js locale files
+- Generate manpages
+
 * Fri Sep 17 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-1
 - Update to 1.0.4
 - Remove BuildRoot and %%clean declarations
