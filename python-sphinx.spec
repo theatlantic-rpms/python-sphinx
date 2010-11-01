@@ -108,7 +108,8 @@ rm -rf doc/_build
 sed -i 's|python ../sphinx-build.py|/usr/bin/sphinx-build|' doc/Makefile
 mv doc reST
 
-# Move language files to /usr/share in association with %patch1
+# Move language files to /usr/share;
+# patch to support this incorporated in 0.6.6
 pushd %{buildroot}%{python_sitelib}
 
 for lang in `find sphinx/locale -maxdepth 1 -mindepth 1 -type d -printf "%f "`;
