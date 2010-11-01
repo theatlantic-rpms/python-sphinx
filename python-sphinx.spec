@@ -6,7 +6,7 @@
 
 Name:       python-sphinx
 Version:    1.0.4
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -104,7 +104,8 @@ mv _build/man/sphinx-*.1 %{buildroot}%{_mandir}/man1/
 popd
 
 # Deliver rst files
-rm -rf doc/_*
+rm -rf doc/_build
+sed -i 's|python ../sphinx-build.py|/usr/bin/sphinx-build|' doc/Makefile
 mv doc reST
 
 # Move language files to /usr/share in association with %patch1
@@ -150,6 +151,9 @@ make test
 
 
 %changelog
+* Mon Nov  1 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-3
+- Fix -doc Makefile to allow regeneration of .rst files
+
 * Mon Nov  1 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-2
 - Actually include *.js locale files
 - Generate manpages
