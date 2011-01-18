@@ -5,8 +5,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.0.4
-Release:    3%{?dist}
+Version:    1.0.6
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -152,6 +152,9 @@ make test
 
 
 %changelog
+* Mon Jan 17 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 1.0.6-1
+- Update to upstream 1.0.6
+
 * Mon Nov  1 2010 Michel Salim <salimma@fedoraproject.org> - 1.0.4-3
 - Fix -doc Makefile to allow regeneration of .rst files
 
