@@ -5,7 +5,7 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.0.6
+Version:    1.0.7
 Release:    1%{?dist}
 Summary:    Python documentation generator
 
@@ -152,6 +152,9 @@ make test
 
 
 %changelog
+* Tue Jan 18 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 1.0.7-1
+- Update to upstream 1.0.7
+
 * Mon Jan 17 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 1.0.6-1
 - Update to upstream 1.0.6
 
