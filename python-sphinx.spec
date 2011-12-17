@@ -28,6 +28,8 @@ BuildRequires: python-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
 BuildRequires: python-nose
+# Test dependencies
+BuildRequires: texlive-latex
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
@@ -248,6 +250,9 @@ popd
 
 
 %changelog
+* Sat Dec 17 2011 Michel Salim <salimma@fedoraproject.org> - 1.1.2-3
+- BR on texlive-latex for LaTeX tests
+
 * Thu Dec  8 2011 Michel Salim <salimma@fedoraproject.org> - 1.1.2-2
 - Enable python3 subpackage
 
