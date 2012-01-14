@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.2
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -250,6 +250,9 @@ popd
 
 
 %changelog
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.2-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Sat Dec 17 2011 Michel Salim <salimma@fedoraproject.org> - 1.1.2-3
 - BR on texlive-latex for LaTeX tests
 
