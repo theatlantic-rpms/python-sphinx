@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.2
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -30,9 +30,7 @@ BuildRequires: python-jinja2
 BuildRequires: python-nose
 # Test dependencies
 BuildRequires: texlive-latex
-Requires:      python-docutils
-Requires:      python-jinja2
-Requires:      python-pygments
+
 %if 0%{?with_python3}
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
@@ -40,11 +38,11 @@ BuildRequires: python3-docutils
 BuildRequires: python3-jinja2
 BuildRequires: python3-pygments
 BuildRequires: python3-nose
-Requires:      python3-docutils
-Requires:      python3-jinja2
-Requires:      python3-pygments
 %endif # with_python3
 
+Requires:      python-docutils
+Requires:      python-jinja2
+Requires:      python-pygments
 
 %description
 Sphinx is a tool that makes it easy to create intelligent and
@@ -79,6 +77,9 @@ the Python docs:
 %package -n python3-sphinx
 Summary:    Python documentation generator
 Group:      Development/Tools
+Requires:      python3-docutils
+Requires:      python3-jinja2
+Requires:      python3-pygments
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -225,6 +226,7 @@ popd
 %files -f sphinx.lang
 %defattr(-,root,root,-)
 %doc AUTHORS CHANGES EXAMPLES LICENSE README TODO
+%exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
 %{python_sitelib}/*
 %dir %{_datadir}/sphinx/
@@ -250,6 +252,10 @@ popd
 
 
 %changelog
+* Sun Feb  5 2012 Michel Salim <salimma@fedoraproject.org> - 1.1.2-5
+- Move python3 runtime dependencies to the right subpackage
+- Properly exclude python3 binaries
+
 * Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
