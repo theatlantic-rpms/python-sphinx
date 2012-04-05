@@ -8,8 +8,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.1.2
-Release:    5%{?dist}
+Version:    1.1.3
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -252,6 +252,9 @@ popd
 
 
 %changelog
+* Thu Apr  5 2012 Michel Salim <salimma@fedoraproject.org> - 1.1.3-1
+- Update to 1.1.3
+
 * Sun Feb  5 2012 Michel Salim <salimma@fedoraproject.org> - 1.1.2-5
 - Move python3 runtime dependencies to the right subpackage
 - Properly exclude python3 binaries
