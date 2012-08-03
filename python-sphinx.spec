@@ -1,4 +1,4 @@
-%if 0%{?fedora} || 0%{?rhel} > 6
+%if 0%{?fedora}
 %global with_python3 1
 %{!?python3_version: %global python3_version %(%{__python3} -c "import sys; sys.stdout.write(sys.version[:3])")}
 %else
@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.3
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -252,6 +252,9 @@ popd
 
 
 %changelog
+* Fri Aug  3 2012 David Malcolm <dmalcolm@redhat.com> - 1.1.3-3
+- remove rhel logic from with_python3 conditional
+
 * Sat Jul 21 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.3-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
