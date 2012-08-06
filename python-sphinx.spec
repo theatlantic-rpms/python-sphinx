@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.3
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -252,6 +252,9 @@ popd
 
 
 %changelog
+* Mon Aug  6 2012 Michel Salim <salimma@fedoraproject.org> - 1.1.3-4
+- Rebuild for Python 3.3
+
 * Fri Aug  3 2012 David Malcolm <dmalcolm@redhat.com> - 1.1.3-3
 - remove rhel logic from with_python3 conditional
 
