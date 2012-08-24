@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.3
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -21,6 +21,8 @@ Group:      Development/Tools
 License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
+# Sent upstream as a fix to work with the next version of docutils
+Patch0: sphinx-docutils-0.10.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -132,6 +134,8 @@ This package contains documentation in reST and HTML formats.
 %prep
 %setup -q -n %{upstream_name}-%{version}%{?prerel}
 sed '1d' -i sphinx/pycode/pgen2/token.py
+
+%patch0 -p1
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -252,6 +256,9 @@ popd
 
 
 %changelog
+* Tue Aug 21 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 1.1.3-5
+- Fix for use of sphinx's manpage writer with docutils-0.10
+
 * Mon Aug  6 2012 Michel Salim <salimma@fedoraproject.org> - 1.1.3-4
 - Rebuild for Python 3.3
 
