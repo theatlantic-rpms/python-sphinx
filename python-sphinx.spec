@@ -22,6 +22,7 @@ License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 # Sent upstream as a fix to work with the next version of docutils
+# https://bitbucket.org/birkenfeld/sphinx/issue/998/docutils-010-will-break-sphinx-manpage
 Patch0: sphinx-docutils-0.10.patch
 
 BuildArch:     noarch
