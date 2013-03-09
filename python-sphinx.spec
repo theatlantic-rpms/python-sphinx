@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.3
-Release:    6%{?dist}
+Release:    7%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -24,6 +24,9 @@ Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream
 # Sent upstream as a fix to work with the next version of docutils
 # https://bitbucket.org/birkenfeld/sphinx/issue/998/docutils-010-will-break-sphinx-manpage
 Patch0: sphinx-docutils-0.10.patch
+# Fixes quoting issue in inheritance_diagram.py
+# Already applied upstream as part of https://bitbucket.org/birkenfeld/sphinx/commits/fc1db93d21a5a535d9d62e5a0c9f0a806a8c117a
+Patch1: Sphinx-1.1.3-fix_quoting_in_inheritance.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -137,6 +140,7 @@ This package contains documentation in reST and HTML formats.
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
 %patch0 -p1
+%patch1 -p1
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -257,6 +261,9 @@ popd
 
 
 %changelog
+* Sat Mar  9 2013 Michel Salim <salimma@fedoraproject.org> - 1.1.3-7
+- Fix inheritance_diagram quoting bug, exposed by the newer, stricter dot
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.3-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
