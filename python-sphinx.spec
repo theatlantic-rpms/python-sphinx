@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.1.3
-Release:    7%{?dist}
+Release:    8%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -261,6 +261,9 @@ popd
 
 
 %changelog
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.3-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Sat Mar  9 2013 Michel Salim <salimma@fedoraproject.org> - 1.1.3-7
 - Fix inheritance_diagram quoting bug, exposed by the newer, stricter dot
 
