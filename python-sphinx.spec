@@ -8,8 +8,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.1.3
-Release:    8%{?dist}
+Version:    1.2.1
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -21,21 +21,16 @@ Group:      Development/Tools
 License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
-# Sent upstream as a fix to work with the next version of docutils
-# https://bitbucket.org/birkenfeld/sphinx/issue/998/docutils-010-will-break-sphinx-manpage
-Patch0: sphinx-docutils-0.10.patch
-# Fixes quoting issue in inheritance_diagram.py
-# Already applied upstream as part of https://bitbucket.org/birkenfeld/sphinx/commits/fc1db93d21a5a535d9d62e5a0c9f0a806a8c117a
-Patch1: Sphinx-1.1.3-fix_quoting_in_inheritance.patch
+Patch0:	    Sphinx-1.2.1-mantarget.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
 BuildRequires: python-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
+BuildRequires: python-pygments
 BuildRequires: python-nose
-# Test dependencies
-BuildRequires: texlive-latex
+#BuildRequires: texlive-latex
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -49,6 +44,11 @@ BuildRequires: python3-nose
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
+# for latex builder
+Requires:      texlive-framed
+Requires:      texlive-threeparttable
+Requires:      texlive-titlesec
+Requires:      texlive-wrapfig
 
 %description
 Sphinx is a tool that makes it easy to create intelligent and
@@ -86,6 +86,11 @@ Group:      Development/Tools
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
+# for latex builder
+Requires:      texlive-framed
+Requires:      texlive-threeparttable
+Requires:      texlive-titlesec
+Requires:      texlive-wrapfig
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -137,10 +142,8 @@ This package contains documentation in reST and HTML formats.
 
 %prep
 %setup -q -n %{upstream_name}-%{version}%{?prerel}
+%patch0 -p1 -b .mantarget
 sed '1d' -i sphinx/pycode/pgen2/token.py
-
-%patch0 -p1
-%patch1 -p1
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -203,7 +206,7 @@ mv doc reST
 # patch to support this incorporated in 0.6.6
 pushd %{buildroot}%{python_sitelib}
 
-for lang in `find sphinx/locale -maxdepth 1 -mindepth 1 -type d -printf "%f "`;
+for lang in `find sphinx/locale -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*' -printf "%f "`;
 do
   install -d %{buildroot}%{_datadir}/sphinx/locale/$lang
   install -d %{buildroot}%{_datadir}/locale/$lang/LC_MESSAGES
@@ -227,14 +230,14 @@ popd
 make test
 %if 0%{?with_python3}
 pushd %{py3dir}
-make test
+PYTHON=python3 make test
 popd
 %endif # with_python3
 
 
 %files -f sphinx.lang
 %defattr(-,root,root,-)
-%doc AUTHORS CHANGES EXAMPLES LICENSE README TODO
+%doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
 %{python_sitelib}/*
@@ -246,7 +249,7 @@ popd
 
 %if 0%{?with_python3}
 %files -n python3-sphinx
-%doc AUTHORS CHANGES EXAMPLES LICENSE README TODO
+%doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
 %{_bindir}/sphinx-*-%{python3_version}
 %{python3_sitelib}/*
 %dir %{_datadir}/sphinx/
@@ -261,6 +264,9 @@ popd
 
 
 %changelog
+* Thu Feb 13 2014 Michel Salim <salimma@fedoraproject.org> - 1.2.1-1
+- Update to 1.2.1
+
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.1.3-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
