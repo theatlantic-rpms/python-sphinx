@@ -236,7 +236,6 @@ popd
 
 
 %files -f sphinx.lang
-%defattr(-,root,root,-)
 %doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
@@ -259,7 +258,6 @@ popd
 %endif # with_python3
 
 %files doc
-%defattr(-,root,root,-)
 %doc html reST
 
 
