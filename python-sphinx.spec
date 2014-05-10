@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -264,6 +264,9 @@ popd
 
 
 %changelog
+* Fri May  9 2014 Orion Poplawski <orion@cora.nwra.com> - 1.2.2-2
+- Rebuild for Python 3.4
+
 * Fri May  9 2014 Orion Poplawski <orion@cora.nwra.com> - 1.2.2-1
 - Update to 1.2.2
 
