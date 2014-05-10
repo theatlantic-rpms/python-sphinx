@@ -8,7 +8,7 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.2.1
+Version:    1.2.2
 Release:    1%{?dist}
 Summary:    Python documentation generator
 
@@ -264,6 +264,9 @@ popd
 
 
 %changelog
+* Fri May  9 2014 Orion Poplawski <orion@cora.nwra.com> - 1.2.2-1
+- Update to 1.2.2
+
 * Thu Feb 13 2014 Michel Salim <salimma@fedoraproject.org> - 1.2.1-1
 - Update to 1.2.1
 
