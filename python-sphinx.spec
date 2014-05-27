@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -179,6 +179,7 @@ pushd %{py3dir}
 for f in %{buildroot}%{_bindir}/sphinx-*;
 do
     mv $f $f-%{python3_version}
+    ln -s %{_bindir}/`basename $f-%{python3_version}` $f-3
 done
 popd
 %endif # with_python3
@@ -249,6 +250,7 @@ popd
 %if 0%{?with_python3}
 %files -n python3-sphinx
 %doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
+%{_bindir}/sphinx-*-3
 %{_bindir}/sphinx-*-%{python3_version}
 %{python3_sitelib}/*
 %dir %{_datadir}/sphinx/
@@ -262,6 +264,10 @@ popd
 
 
 %changelog
+* Thu May 22 2014 Bohuslav Kabrda <bkabrda@redhat.com> - 1.2.2-3
+- Add python-*-3 links to scripts
+Resolves: #1098109
+
 * Fri May  9 2014 Orion Poplawski <orion@cora.nwra.com> - 1.2.2-2
 - Rebuild for Python 3.4
 
