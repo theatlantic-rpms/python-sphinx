@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -238,6 +238,7 @@ popd
 
 %files -f sphinx.lang
 %doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
+%exclude %{_bindir}/sphinx-*-3
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
 %{python_sitelib}/*
@@ -264,8 +265,11 @@ popd
 
 
 %changelog
+* Tue May 27 2014 Bohuslav Kabrda <bkabrda@redhat.com> - 1.2.2-4
+- Don't own the -3 scripts by python 2 package
+
 * Thu May 22 2014 Bohuslav Kabrda <bkabrda@redhat.com> - 1.2.2-3
-- Add python-*-3 links to scripts
+- Add sphinx-*-3 links to scripts
 Resolves: #1098109
 
 * Fri May  9 2014 Orion Poplawski <orion@cora.nwra.com> - 1.2.2-2
