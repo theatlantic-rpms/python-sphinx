@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    5%{?dist}
+Release:    6%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -21,7 +21,7 @@ Group:      Development/Tools
 License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
-Patch0:	    Sphinx-1.2.1-mantarget.patch
+Patch0:     Sphinx-1.2.1-mantarget.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -79,6 +79,27 @@ the Python docs:
       snippets and inclusion of appropriately formatted docstrings.
 
 
+%package latex
+Summary:    LaTeX builder for %{name}
+Requires:   %{name} = %{version}-%{release}
+Requires:   texlive-framed
+Requires:   texlive-threeparttable
+Requires:   texlive-titlesec
+Requires:   texlive-wrapfig
+
+%description latex
+Sphinx is a tool that makes it easy to create intelligent and
+beautiful documentation for Python projects (or other documents
+consisting of multiple reStructuredText sources), written by Georg
+Brandl. It was originally created to translate the new Python
+documentation, but has now been cleaned up in the hope that it will be
+useful to many other projects.
+
+This package contains the LaTeX builder for Sphinx. It is packaged
+separately so that the main package does not pull in TeXLive
+dependencies.
+
+
 %if 0%{?with_python3}
 %package -n python3-sphinx
 Summary:    Python documentation generator
@@ -86,11 +107,6 @@ Group:      Development/Tools
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
-# for latex builder
-Requires:      texlive-framed
-Requires:      texlive-threeparttable
-Requires:      texlive-titlesec
-Requires:      texlive-wrapfig
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -119,6 +135,26 @@ the Python docs:
     * Code handling: automatic highlighting using the Pygments highlighter
     * Various extensions are available, e.g. for automatic testing of
       snippets and inclusion of appropriately formatted docstrings.
+
+%package -n python3-sphinx-latex
+Summary:    LaTeX builder for %{name}
+Requires:   python3-sphinx = %{version}-%{release}
+Requires:   texlive-framed
+Requires:   texlive-threeparttable
+Requires:   texlive-titlesec
+Requires:   texlive-wrapfig
+
+%description -n python3-sphinx-latex
+Sphinx is a tool that makes it easy to create intelligent and
+beautiful documentation for Python projects (or other documents
+consisting of multiple reStructuredText sources), written by Georg
+Brandl. It was originally created to translate the new Python
+documentation, but has now been cleaned up in the hope that it will be
+useful to many other projects.
+
+This package contains the LaTeX builder for Sphinx. It is packaged
+separately so that the main package does not pull in TeXLive
+dependencies.
 %endif # with_python3
 
 
@@ -127,7 +163,6 @@ Summary:    Documentation for %{name}
 Group:      Documentation
 License:    BSD
 Requires:   %{name} = %{version}-%{release}
-
 
 %description doc
 Sphinx is a tool that makes it easy to create intelligent and
@@ -195,6 +230,10 @@ for f in %{buildroot}%{_mandir}/man1/sphinx-*.1;
 do
     cp -p $f $(echo $f | sed -e "s|.1$|-%{python3_version}.1|")
 done
+
+# Remove language files, they're identical to the ones from the
+# Python 2 build that will be moved to /usr/share below
+find %{buildroot}%{python3_sitelib}/sphinx/locale -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*' -exec rm -rf '{}' \;
 %endif # with_python3
 popd
 
@@ -241,6 +280,9 @@ popd
 %exclude %{_bindir}/sphinx-*-3
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
+%exclude %{python_sitelib}/sphinx/builders/latex.py*
+%exclude %{python_sitelib}/sphinx/writers/latex.py*
+%exclude %{python_sitelib}/sphinx/texinputs
 %{python_sitelib}/*
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
@@ -248,16 +290,33 @@ popd
 %exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 %{_mandir}/man1/*
 
+%files latex
+%{python_sitelib}/sphinx/builders/latex.py*
+%{python_sitelib}/sphinx/writers/latex.py*
+%{python_sitelib}/sphinx/texinputs
+
 %if 0%{?with_python3}
-%files -n python3-sphinx
+%files -n python3-sphinx -f sphinx.lang
 %doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
 %{_bindir}/sphinx-*-3
 %{_bindir}/sphinx-*-%{python3_version}
+%exclude %{python3_sitelib}/sphinx/builders/latex.py*
+%exclude %{python3_sitelib}/sphinx/builders/__pycache__/latex.*.py*
+%exclude %{python3_sitelib}/sphinx/writers/latex.py*
+%exclude %{python3_sitelib}/sphinx/writers/__pycache__/latex.*.py*
+%exclude %{python3_sitelib}/sphinx/texinputs
 %{python3_sitelib}/*
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
 %{_mandir}/man1/sphinx-*-%{python3_version}.1*
+
+%files -n python3-sphinx-latex
+%{python3_sitelib}/sphinx/builders/latex.py*
+%{python3_sitelib}/sphinx/builders/__pycache__/latex.*.py*
+%{python3_sitelib}/sphinx/writers/latex.py*
+%{python3_sitelib}/sphinx/writers/__pycache__/latex.*.py*
+%{python3_sitelib}/sphinx/texinputs
 %endif # with_python3
 
 %files doc
@@ -265,6 +324,13 @@ popd
 
 
 %changelog
+* Thu Jan 22 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-6
+- Split off LaTeX builder into its own subpackages, to remove TeXLive
+  dependencies from the main package.
+  Thanks to Robert Kuska <rkuska@redhat.com> for feedback
+- Clean up python3-sphinx's locale files, they ended up in the python2 package.
+  Share the locale files in /usr/share instead
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.2.2-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
