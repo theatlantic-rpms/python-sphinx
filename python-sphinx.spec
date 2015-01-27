@@ -5,11 +5,15 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
 
+# more work needed; currently sphinx-build fails when
+# some latex files are unavailable - bz#1185574
+%bcond_with splitlatex
+
 %global upstream_name Sphinx
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    6%{?dist}
+Release:    7%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -44,11 +48,13 @@ BuildRequires: python3-nose
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
+%if ! 0%{?with_splitlatex}
 # for latex builder
 Requires:      texlive-framed
 Requires:      texlive-threeparttable
 Requires:      texlive-titlesec
 Requires:      texlive-wrapfig
+%endif
 
 %description
 Sphinx is a tool that makes it easy to create intelligent and
@@ -79,6 +85,7 @@ the Python docs:
       snippets and inclusion of appropriately formatted docstrings.
 
 
+%if 0%{?with_splitlatex}
 %package latex
 Summary:    LaTeX builder for %{name}
 Requires:   %{name} = %{version}-%{release}
@@ -98,6 +105,7 @@ useful to many other projects.
 This package contains the LaTeX builder for Sphinx. It is packaged
 separately so that the main package does not pull in TeXLive
 dependencies.
+%endif
 
 
 %if 0%{?with_python3}
@@ -136,6 +144,7 @@ the Python docs:
     * Various extensions are available, e.g. for automatic testing of
       snippets and inclusion of appropriately formatted docstrings.
 
+%if 0%{?with_splitlatex}
 %package -n python3-sphinx-latex
 Summary:    LaTeX builder for %{name}
 Requires:   python3-sphinx = %{version}-%{release}
@@ -155,6 +164,7 @@ useful to many other projects.
 This package contains the LaTeX builder for Sphinx. It is packaged
 separately so that the main package does not pull in TeXLive
 dependencies.
+%endif # with_splitlatex
 %endif # with_python3
 
 
@@ -280,9 +290,11 @@ popd
 %exclude %{_bindir}/sphinx-*-3
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
+%if 0%{?with_splitlatex}
 %exclude %{python_sitelib}/sphinx/builders/latex.py*
 %exclude %{python_sitelib}/sphinx/writers/latex.py*
 %exclude %{python_sitelib}/sphinx/texinputs
+%endif
 %{python_sitelib}/*
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
@@ -290,33 +302,39 @@ popd
 %exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 %{_mandir}/man1/*
 
+%if 0%{?with_splitlatex}
 %files latex
 %{python_sitelib}/sphinx/builders/latex.py*
 %{python_sitelib}/sphinx/writers/latex.py*
 %{python_sitelib}/sphinx/texinputs
+%endif
 
 %if 0%{?with_python3}
 %files -n python3-sphinx -f sphinx.lang
 %doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
 %{_bindir}/sphinx-*-3
 %{_bindir}/sphinx-*-%{python3_version}
+%if 0%{?with_splitlatex}
 %exclude %{python3_sitelib}/sphinx/builders/latex.py*
 %exclude %{python3_sitelib}/sphinx/builders/__pycache__/latex.*.py*
 %exclude %{python3_sitelib}/sphinx/writers/latex.py*
 %exclude %{python3_sitelib}/sphinx/writers/__pycache__/latex.*.py*
 %exclude %{python3_sitelib}/sphinx/texinputs
+%endif
 %{python3_sitelib}/*
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
 %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 
+%if 0%{?with_splitlatex}
 %files -n python3-sphinx-latex
 %{python3_sitelib}/sphinx/builders/latex.py*
 %{python3_sitelib}/sphinx/builders/__pycache__/latex.*.py*
 %{python3_sitelib}/sphinx/writers/latex.py*
 %{python3_sitelib}/sphinx/writers/__pycache__/latex.*.py*
 %{python3_sitelib}/sphinx/texinputs
+%endif # with_splitlatex
 %endif # with_python3
 
 %files doc
@@ -324,6 +342,9 @@ popd
 
 
 %changelog
+* Tue Jan 27 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-7
+- Disable separate LaTeX builder for now (bz#1185574)
+
 * Thu Jan 22 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-6
 - Split off LaTeX builder into its own subpackages, to remove TeXLive
   dependencies from the main package.
