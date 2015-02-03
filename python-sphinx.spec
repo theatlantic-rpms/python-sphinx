@@ -13,7 +13,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    7%{?dist}
+Release:    8%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -49,6 +49,7 @@ Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
 %if ! 0%{?with_splitlatex}
+Provides:      %{name}-latex = %{version}-%{release}
 # for latex builder
 Requires:      texlive-framed
 Requires:      texlive-threeparttable
@@ -342,6 +343,10 @@ popd
 
 
 %changelog
+* Tue Feb  3 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-8
+- If a separate LaTeX subpackage is not generated, the main package should have
+  a virtual Provides: for it (bz#1187989)
+
 * Tue Jan 27 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-7
 - Disable separate LaTeX builder for now (bz#1185574)
 
