@@ -13,7 +13,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    8%{?dist}
+Release:    9%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -34,7 +34,6 @@ BuildRequires: python-docutils
 BuildRequires: python-jinja2
 BuildRequires: python-pygments
 BuildRequires: python-nose
-#BuildRequires: texlive-latex
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -50,7 +49,6 @@ Requires:      python-jinja2
 Requires:      python-pygments
 %if ! 0%{?with_splitlatex}
 Provides:      %{name}-latex = %{version}-%{release}
-# for latex builder
 Requires:      texlive-framed
 Requires:      texlive-threeparttable
 Requires:      texlive-titlesec
@@ -116,6 +114,13 @@ Group:      Development/Tools
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
+%if ! 0%{?with_splitlatex}
+Provides:      python3-sphinx-latex = %{version}-%{release}
+Requires:      texlive-framed
+Requires:      texlive-threeparttable
+Requires:      texlive-titlesec
+Requires:      texlive-wrapfig
+%endif
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -343,6 +348,9 @@ popd
 
 
 %changelog
+* Tue Feb  3 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-9
+- python3-sphinx package also Provides: python3-sphinx-latex
+
 * Tue Feb  3 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-8
 - If a separate LaTeX subpackage is not generated, the main package should have
   a virtual Provides: for it (bz#1187989)
