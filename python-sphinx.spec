@@ -13,7 +13,7 @@
 
 Name:       python-sphinx
 Version:    1.2.2
-Release:    9%{?dist}
+Release:    10%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -26,6 +26,7 @@ License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 Patch0:     Sphinx-1.2.1-mantarget.patch
+Patch1:     Sphinx-1.2.2-verbosetests.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -33,7 +34,28 @@ BuildRequires: python-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
 BuildRequires: python-pygments
+
+# for testing
 BuildRequires: python-nose
+BuildRequires: gettext
+BuildRequires: texinfo
+BuildRequires: python-sqlalchemy
+BuildRequires: python-whoosh
+# note: no Python3 xapian binding yet
+BuildRequires: xapian-bindings-python
+BuildRequires: texlive-collection-fontsrecommended
+BuildRequires: texlive-collection-latex
+BuildRequires: tex(cmap.sty)
+BuildRequires: tex(ecrm1000.tfm)
+BuildRequires: tex(fancybox.sty)
+BuildRequires: tex(footnote.sty)
+BuildRequires: tex(framed.sty)
+BuildRequires: tex(multirow.sty)
+BuildRequires: tex(parskip.sty)
+BuildRequires: tex(titlesec.sty)
+BuildRequires: tex(threeparttable.sty)
+BuildRequires: tex(wrapfig.sty)
+
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -42,6 +64,8 @@ BuildRequires: python3-docutils
 BuildRequires: python3-jinja2
 BuildRequires: python3-pygments
 BuildRequires: python3-nose
+BuildRequires: python3-sqlalchemy
+BuildRequires: python3-whoosh
 %endif # with_python3
 
 Requires:      python-docutils
@@ -49,10 +73,18 @@ Requires:      python-jinja2
 Requires:      python-pygments
 %if ! 0%{?with_splitlatex}
 Provides:      %{name}-latex = %{version}-%{release}
-Requires:      texlive-framed
-Requires:      texlive-threeparttable
-Requires:      texlive-titlesec
-Requires:      texlive-wrapfig
+Requires:      texlive-collection-fontsrecommended
+Requires:      texlive-collection-latex
+Requires:      tex(cmap.sty)
+Requires:      tex(ecrm1000.tfm)
+Requires:      tex(fancybox.sty)
+Requires:      tex(footnote.sty)
+Requires:      tex(framed.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(parskip.sty)
+Requires:      tex(titlesec.sty)
+Requires:      tex(threeparttable.sty)
+Requires:      tex(wrapfig.sty)
 %endif
 
 %description
@@ -86,12 +118,20 @@ the Python docs:
 
 %if 0%{?with_splitlatex}
 %package latex
-Summary:    LaTeX builder for %{name}
-Requires:   %{name} = %{version}-%{release}
-Requires:   texlive-framed
-Requires:   texlive-threeparttable
-Requires:   texlive-titlesec
-Requires:   texlive-wrapfig
+Summary:       LaTeX builder for %{name}
+Requires:      %{name} = %{version}-%{release}
+Requires:      texlive-collection-fontsrecommended
+Requires:      texlive-collection-latex
+Requires:      tex(cmap.sty)
+Requires:      tex(ecrm1000.tfm)
+Requires:      tex(fancybox.sty)
+Requires:      tex(footnote.sty)
+Requires:      tex(framed.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(parskip.sty)
+Requires:      tex(titlesec.sty)
+Requires:      tex(threeparttable.sty)
+Requires:      tex(wrapfig.sty)
 
 %description latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -109,17 +149,25 @@ dependencies.
 
 %if 0%{?with_python3}
 %package -n python3-sphinx
-Summary:    Python documentation generator
-Group:      Development/Tools
+Summary:       Python documentation generator
+Group:         Development/Tools
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
 %if ! 0%{?with_splitlatex}
 Provides:      python3-sphinx-latex = %{version}-%{release}
-Requires:      texlive-framed
-Requires:      texlive-threeparttable
-Requires:      texlive-titlesec
-Requires:      texlive-wrapfig
+Requires:      texlive-collection-fontsrecommended
+Requires:      texlive-collection-latex
+Requires:      tex(cmap.sty)
+Requires:      tex(ecrm1000.tfm)
+Requires:      tex(fancybox.sty)
+Requires:      tex(footnote.sty)
+Requires:      tex(framed.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(parskip.sty)
+Requires:      tex(titlesec.sty)
+Requires:      tex(threeparttable.sty)
+Requires:      tex(wrapfig.sty)
 %endif
 
 %description -n python3-sphinx
@@ -152,12 +200,20 @@ the Python docs:
 
 %if 0%{?with_splitlatex}
 %package -n python3-sphinx-latex
-Summary:    LaTeX builder for %{name}
-Requires:   python3-sphinx = %{version}-%{release}
-Requires:   texlive-framed
-Requires:   texlive-threeparttable
-Requires:   texlive-titlesec
-Requires:   texlive-wrapfig
+Summary:       LaTeX builder for %{name}
+Requires:      python3-sphinx = %{version}-%{release}
+Requires:      texlive-collection-fontsrecommended
+Requires:      texlive-collection-latex
+Requires:      tex(cmap.sty)
+Requires:      tex(ecrm1000.tfm)
+Requires:      tex(fancybox.sty)
+Requires:      tex(footnote.sty)
+Requires:      tex(framed.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(parskip.sty)
+Requires:      tex(titlesec.sty)
+Requires:      tex(threeparttable.sty)
+Requires:      tex(wrapfig.sty)
 
 %description -n python3-sphinx-latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -194,6 +250,9 @@ This package contains documentation in reST and HTML formats.
 %prep
 %setup -q -n %{upstream_name}-%{version}%{?prerel}
 %patch0 -p1 -b .mantarget
+# not backing up since every executable file in tests/ results in
+# an additional "skipped" test
+%patch1 -p1
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
 %if 0%{?with_python3}
@@ -283,10 +342,10 @@ popd
 
 
 %check
-make test
+LANG=en_US.UTF-8 make test
 %if 0%{?with_python3}
 pushd %{py3dir}
-PYTHON=python3 make test
+LANG=en_US.UTF-8 PYTHON=python3 make test
 popd
 %endif # with_python3
 
@@ -348,6 +407,11 @@ popd
 
 
 %changelog
+* Thu Feb  5 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-10
+- Complete LaTeX builder deps (fixes bz#882166)
+- Make test output verbose
+- Add BRs needed to enable all tests
+
 * Tue Feb  3 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-9
 - python3-sphinx package also Provides: python3-sphinx-latex
 
