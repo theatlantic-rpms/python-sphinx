@@ -12,8 +12,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.2.2
-Release:    10%{?dist}
+Version:    1.2.3
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -54,6 +54,7 @@ BuildRequires: tex(multirow.sty)
 BuildRequires: tex(parskip.sty)
 BuildRequires: tex(titlesec.sty)
 BuildRequires: tex(threeparttable.sty)
+BuildRequires: tex(upquote.sty)
 BuildRequires: tex(wrapfig.sty)
 
 
@@ -84,6 +85,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(parskip.sty)
 Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
+Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
 %endif
 
@@ -131,6 +133,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(parskip.sty)
 Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
+Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
 
 %description latex
@@ -167,6 +170,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(parskip.sty)
 Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
+Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
 %endif
 
@@ -213,6 +217,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(parskip.sty)
 Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
+Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
 
 %description -n python3-sphinx-latex
@@ -351,7 +356,8 @@ popd
 
 
 %files -f sphinx.lang
-%doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
+%license LICENSE
+%doc AUTHORS CHANGES EXAMPLES README.rst TODO
 %exclude %{_bindir}/sphinx-*-3
 %exclude %{_bindir}/sphinx-*-%{python3_version}
 %{_bindir}/sphinx-*
@@ -376,7 +382,8 @@ popd
 
 %if 0%{?with_python3}
 %files -n python3-sphinx -f sphinx.lang
-%doc AUTHORS CHANGES EXAMPLES LICENSE README.rst TODO
+%license LICENSE
+%doc AUTHORS CHANGES EXAMPLES README.rst TODO
 %{_bindir}/sphinx-*-3
 %{_bindir}/sphinx-*-%{python3_version}
 %if 0%{?with_splitlatex}
@@ -407,6 +414,10 @@ popd
 
 
 %changelog
+* Thu Feb  5 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.3-1
+- Update to 1.2.3
+- Mark license file with %%license instead of %%doc
+
 * Thu Feb  5 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.2-10
 - Complete LaTeX builder deps (fixes bz#882166)
 - Make test output verbose
