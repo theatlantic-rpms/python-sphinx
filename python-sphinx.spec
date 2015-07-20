@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.3
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -30,6 +30,9 @@ BuildRequires: python-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
 BuildRequires: python-pygments
+
+# for fixes
+BuildRequires: dos2unix
 
 # for testing
 BuildRequires: python-nose
@@ -218,6 +221,9 @@ This package contains documentation in reST and HTML formats.
 %patch1 -p1
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
+# fix line encoding of bundled jquery.js
+dos2unix -k ./sphinx/themes/basic/static/jquery.js
+
 %if 0%{?with_python3}
 rm -rf %{py3dir}
 cp -a . %{py3dir}
@@ -350,6 +356,9 @@ popd
 
 
 %changelog
+* Mon Jul 20 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.3-4
+- Fix line encoding of bundled jquery.js
+
 * Mon Jul 20 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.3-3
 - Re-introduce LaTeX subpackage, solely for pulling in LaTeX dependencies
 
