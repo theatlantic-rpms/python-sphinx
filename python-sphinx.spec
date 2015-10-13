@@ -9,7 +9,7 @@
 
 Name:       python-sphinx
 Version:    1.2.3
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -23,6 +23,7 @@ URL:        http://sphinx.pocoo.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 Patch0:     Sphinx-1.2.1-mantarget.patch
 Patch1:     Sphinx-1.2.2-verbosetests.patch
+Patch2:     html-parser-HTMLParserError-removed.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -219,6 +220,7 @@ This package contains documentation in reST and HTML formats.
 # not backing up since every executable file in tests/ results in
 # an additional "skipped" test
 %patch1 -p1
+%patch2 -p1
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
 # fix line encoding of bundled jquery.js
@@ -356,6 +358,10 @@ popd
 
 
 %changelog
+* Tue Oct 13 2015 Robert Kuska <rkuska@redhat.com> - 1.2.3-5
+- Rebuilt for Python3.5 rebuild
+- add patch to reflect that Python3.5 dropped HTMLParserError
+
 * Mon Jul 20 2015 Michel Alexandre Salim <salimma@fedoraproject.org> - 1.2.3-4
 - Fix line encoding of bundled jquery.js
 
