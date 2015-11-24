@@ -1,6 +1,5 @@
 %if 0%{?fedora}
 %global with_python3 1
-%{!?python3_version: %global python3_version %(%{__python3} -c "import sys; sys.stdout.write(sys.version[:3])")}
 %else
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 %endif
@@ -8,8 +7,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.2.3
-Release:    5%{?dist}
+Version:    1.3.1
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -19,18 +18,20 @@ Group:      Development/Tools
 # sphinx/pycode/pgen2 Python
 # jquery (MIT or GPLv2)
 License:    BSD and Public Domain and Python and (MIT or GPLv2)
-URL:        http://sphinx.pocoo.org/
+URL:        http://sphinx-doc.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 Patch0:     Sphinx-1.2.1-mantarget.patch
-Patch1:     Sphinx-1.2.2-verbosetests.patch
-Patch2:     html-parser-HTMLParserError-removed.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
+BuildRequires: python-babel
 BuildRequires: python-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
-BuildRequires: python-pygments
+BuildRequires: python-pygments >= 2.0
+BuildRequires: python-six
+BuildRequires: python-sphinx_rtd_theme
+BuildRequires: python2-sphinx-theme-alabaster
 
 # for fixes
 BuildRequires: dos2unix
@@ -41,6 +42,7 @@ BuildRequires: gettext
 BuildRequires: texinfo
 BuildRequires: python-sqlalchemy
 BuildRequires: python-whoosh
+BuildRequires: python2-snowballstemmer
 # note: no Python3 xapian binding yet
 BuildRequires: xapian-bindings-python
 BuildRequires: texlive-collection-fontsrecommended
@@ -60,6 +62,7 @@ BuildRequires: tex(wrapfig.sty)
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
+BuildRequires: python3-babel
 BuildRequires: python3-setuptools
 BuildRequires: python3-docutils
 BuildRequires: python3-jinja2
@@ -67,13 +70,56 @@ BuildRequires: python3-pygments
 BuildRequires: python3-nose
 BuildRequires: python3-sqlalchemy
 BuildRequires: python3-whoosh
+BuildRequires: python3-snowballstemmer
+BuildRequires: python3-six
+BuildRequires: python3-sphinx_rtd_theme
+BuildRequires: python3-sphinx-theme-alabaster
 %endif # with_python3
 
+
+%description
+Sphinx is a tool that makes it easy to create intelligent and
+beautiful documentation for Python projects (or other documents
+consisting of multiple reStructuredText sources), written by Georg
+Brandl. It was originally created to translate the new Python
+documentation, but has now been cleaned up in the hope that it will be
+useful to many other projects.
+
+Sphinx uses reStructuredText as its markup language, and many of its
+strengths come from the power and straightforwardness of
+reStructuredText and its parsing and translating suite, the Docutils.
+
+Although it is still under constant development, the following
+features are already present, work fine and can be seen "in action" in
+the Python docs:
+
+    * Output formats: HTML (including Windows HTML Help) and LaTeX,
+      for printable PDF versions
+    * Extensive cross-references: semantic markup and automatic links
+      for functions, classes, glossary terms and similar pieces of
+      information
+    * Hierarchical structure: easy definition of a document tree, with
+      automatic links to siblings, parents and children
+    * Automatic indices: general index as well as a module index
+    * Code handling: automatic highlighting using the Pygments highlighter
+    * Various extensions are available, e.g. for automatic testing of
+      snippets and inclusion of appropriately formatted docstrings.
+
+
+%package -n    python2-%{upstream_name}
+Summary:       Python documentation generator
+Requires:      python-babel
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
+Requires:      python2-snowballstemmer
+Requires:      python2-sphinx_rtd_theme
+Requires:      python-sphinx_rtd_theme
+Requires:      python2-six
+Obsoletes:     python-sphinx = 1.2.3
+%{?python_provide:%python_provide python2-sphinx}
 
-%description
+%description -n python2-%{upstream_name}
 Sphinx is a tool that makes it easy to create intelligent and
 beautiful documentation for Python projects (or other documents
 consisting of multiple reStructuredText sources), written by Georg
@@ -135,9 +181,15 @@ builder.
 %package -n python3-sphinx
 Summary:       Python documentation generator
 Group:         Development/Tools
+Requires:      python-babel
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
+Requires:      python3-snowballstemmer
+Requires:      python3-sphinx_rtd_theme
+Requires:      python3-sphinx-theme-alabaster
+Requires:      python3-six
+%{?python_provide:%python_provide python3-sphinx}
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -215,12 +267,8 @@ This package contains documentation in reST and HTML formats.
 
 
 %prep
-%setup -q -n %{upstream_name}-%{version}%{?prerel}
-%patch0 -p1 -b .mantarget
-# not backing up since every executable file in tests/ results in
-# an additional "skipped" test
-%patch1 -p1
-%patch2 -p1
+%autosetup -n %{upstream_name}-%{version}%{?prerel} -p1
+
 sed '1d' -i sphinx/pycode/pgen2/token.py
 
 # fix line encoding of bundled jquery.js
@@ -233,11 +281,9 @@ cp -a . %{py3dir}
 
 
 %build
-%{__python} setup.py build
+%py2_build
 %if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py build
-popd
+%py3_build
 %endif # with_python3
 
 pushd doc
@@ -249,38 +295,34 @@ popd
 
 
 %install
-rm -rf %{buildroot}
-
-# Must do the python3 install first because the scripts in /usr/bin are
-# overwritten with every setup.py install (and we want the python2 version
+# Must do the python2 install first because the scripts in /usr/bin are
+# overwritten with every setup.py install (and we want the python3 version
 # to be the default for now).
-%if 0%{?with_python3}
-pushd %{py3dir}
-%{__python3} setup.py install --skip-build --root %{buildroot}
+%py2_install
 for f in %{buildroot}%{_bindir}/sphinx-*;
 do
-    mv $f $f-%{python3_version}
-    ln -s %{_bindir}/`basename $f-%{python3_version}` $f-3
+    mv $f $f-%{python2_version}
+    ln -s %{_bindir}/`basename $f-%{python2_version}` $f-2
 done
-popd
+
+
+%if 0%{?with_python3}
+%py3_install
 %endif # with_python3
 
-%{__python} setup.py install --skip-build --root %{buildroot}
 
 pushd doc
 # Deliver man pages
 install -d %{buildroot}%{_mandir}/man1
 mv _build/man/sphinx-*.1 %{buildroot}%{_mandir}/man1/
-%if 0%{?with_python3}
 for f in %{buildroot}%{_mandir}/man1/sphinx-*.1;
 do
-    cp -p $f $(echo $f | sed -e "s|.1$|-%{python3_version}.1|")
+    cp -p $f $(echo $f | sed -e "s|.1$|-%{python2_version}.1|")
 done
 
 # Remove language files, they're identical to the ones from the
 # Python 2 build that will be moved to /usr/share below
 find %{buildroot}%{python3_sitelib}/sphinx/locale -maxdepth 1 -mindepth 1 -type d -not -path '*/\.*' -exec rm -rf '{}' \;
-%endif # with_python3
 popd
 
 # Deliver rst files
@@ -321,18 +363,17 @@ popd
 %endif # with_python3
 
 
-%files -f sphinx.lang
+%files -f sphinx.lang -n python2-%{upstream_name}
 %license LICENSE
-%doc AUTHORS CHANGES EXAMPLES README.rst TODO
-%exclude %{_bindir}/sphinx-*-3
-%exclude %{_bindir}/sphinx-*-%{python3_version}
-%{_bindir}/sphinx-*
-%{python_sitelib}/*
+%doc AUTHORS CHANGES EXAMPLES README.rst
+%{_bindir}/sphinx-*-2
+%{_bindir}/sphinx-*-%{python2_version}
+%{python2_sitelib}/sphinx/
+%{python2_sitelib}/Sphinx-%{version}-py%{python2_version}.egg-info/
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
-%exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
-%{_mandir}/man1/*
+%{_mandir}/man1/sphinx-*-%{python2_version}.1*
 
 %files latex
 %license LICENSE
@@ -340,14 +381,17 @@ popd
 %if 0%{?with_python3}
 %files -n python3-sphinx -f sphinx.lang
 %license LICENSE
-%doc AUTHORS CHANGES EXAMPLES README.rst TODO
-%{_bindir}/sphinx-*-3
-%{_bindir}/sphinx-*-%{python3_version}
-%{python3_sitelib}/*
+%doc AUTHORS CHANGES EXAMPLES README.rst
+%exclude %{_bindir}/sphinx-*-2
+%exclude %{_bindir}/sphinx-*-%{python2_version}
+%{_bindir}/sphinx*
+%{python3_sitelib}/sphinx/
+%{python3_sitelib}/Sphinx-%{version}-py%{python3_version}.egg-info/
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
-%{_mandir}/man1/sphinx-*-%{python3_version}.1*
+%exclude %{_mandir}/man1/sphinx-*-%{python2_version}.1*
+%{_mandir}/man1/*
 
 %files -n python3-sphinx-latex
 %license LICENSE
@@ -358,6 +402,11 @@ popd
 
 
 %changelog
+* Tue Nov 24 2015 Julien Enselme <jujens@jujens.eu> - 1.3.1-1
+- Update to 1.3.1
+- Update to new guidelines
+- Make the default executable use python3
+
 * Tue Oct 13 2015 Robert Kuska <rkuska@redhat.com> - 1.2.3-5
 - Rebuilt for Python3.5 rebuild
 - add patch to reflect that Python3.5 dropped HTMLParserError
