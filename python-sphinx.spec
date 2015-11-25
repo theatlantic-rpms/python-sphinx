@@ -8,7 +8,7 @@
 
 Name:       python-sphinx
 Version:    1.3.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -117,7 +117,6 @@ Requires:      python-jinja2
 Requires:      python-pygments
 Requires:      python-mock
 Requires:      python2-snowballstemmer
-Requires:      python2-sphinx_rtd_theme
 Requires:      python-sphinx_rtd_theme
 Requires:      python2-six
 Obsoletes:     python-sphinx = 1.2.3
@@ -407,6 +406,9 @@ popd
 
 
 %changelog
+* Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-2
+- Fix requirements of python2- subpackage
+
 * Tue Nov 24 2015 Julien Enselme <jujens@jujens.eu> - 1.3.1-1
 - Update to 1.3.1 (#1136284)
 - Update to new guidelines
