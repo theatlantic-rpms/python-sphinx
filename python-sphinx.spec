@@ -184,7 +184,7 @@ builder.
 %package -n python3-sphinx
 Summary:       Python documentation generator
 Group:         Development/Tools
-Requires:      python-babel
+Requires:      python3-babel
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
@@ -303,15 +303,22 @@ popd
 # overwritten with every setup.py install (and we want the python3 version
 # to be the default for now).
 %py2_install
-for f in %{buildroot}%{_bindir}/sphinx-*;
-do
-    mv $f $f-%{python2_version}
-    ln -s %{_bindir}/`basename $f-%{python2_version}` $f-2
+for i in sphinx-{apidoc,autogen,build,quickstart}; do
+    mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python2_version}
+    ln -s $i-%{python2_version} %{buildroot}%{_bindir}/$i-2
+%if 0%{?with_python3} == 0
+    ln -s $i-2 %{buildroot}%{_bindir}/$i
+%endif
 done
 
 
 %if 0%{?with_python3}
 %py3_install
+for i in sphinx-{apidoc,autogen,build,quickstart}; do
+    mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python3_version}
+    ln -s $i-%{python3_version} %{buildroot}%{_bindir}/$i-3
+    ln -s $i-3 %{buildroot}%{_bindir}/$i
+done
 %endif # with_python3
 
 
@@ -367,11 +374,13 @@ popd
 %endif # with_python3
 
 
+%files latex
+%license LICENSE
+
 %files -f sphinx.lang -n python2-%{upstream_name}
 %license LICENSE
 %doc AUTHORS CHANGES EXAMPLES README.rst
-%{_bindir}/sphinx-*-2
-%{_bindir}/sphinx-*-%{python2_version}
+%{_bindir}/sphinx-*-2*
 %{python2_sitelib}/sphinx/
 %{python2_sitelib}/Sphinx-%{version}-py%{python2_version}.egg-info/
 %dir %{_datadir}/sphinx/
@@ -379,16 +388,14 @@ popd
 %dir %{_datadir}/sphinx/locale/*
 %{_mandir}/man1/sphinx-*-%{python2_version}.1*
 
-%files latex
+%if 0%{?with_python3}
+%files -n python3-sphinx-latex
 %license LICENSE
 
-%if 0%{?with_python3}
 %files -n python3-sphinx -f sphinx.lang
 %license LICENSE
 %doc AUTHORS CHANGES EXAMPLES README.rst
-%exclude %{_bindir}/sphinx-*-2
-%exclude %{_bindir}/sphinx-*-%{python2_version}
-%{_bindir}/sphinx*
+%{_bindir}/sphinx-*-3*
 %{python3_sitelib}/sphinx/
 %{python3_sitelib}/Sphinx-%{version}-py%{python3_version}.egg-info/
 %dir %{_datadir}/sphinx/
@@ -397,9 +404,12 @@ popd
 %exclude %{_mandir}/man1/sphinx-*-%{python2_version}.1*
 %{_mandir}/man1/*
 
-%files -n python3-sphinx-latex
-%license LICENSE
 %endif # with_python3
+# This part falls into python2- when building without python3
+%{_bindir}/sphinx-apidoc
+%{_bindir}/sphinx-autogen
+%{_bindir}/sphinx-build
+%{_bindir}/sphinx-quickstart
 
 %files doc
 %doc html reST
@@ -408,6 +418,7 @@ popd
 %changelog
 * Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-2
 - Fix requirements of python2- subpackage
+- Provide sphinx-*-{3.5,3} symlinks for each script
 
 * Tue Nov 24 2015 Julien Enselme <jujens@jujens.eu> - 1.3.1-1
 - Update to 1.3.1 (#1136284)
