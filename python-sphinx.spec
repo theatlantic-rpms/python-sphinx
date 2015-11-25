@@ -8,7 +8,7 @@
 
 Name:       python-sphinx
 Version:    1.3.1
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -119,6 +119,7 @@ Requires:      python-mock
 Requires:      python2-snowballstemmer
 Requires:      python-sphinx_rtd_theme
 Requires:      python2-six
+Requires:      python2-sphinx-theme-alabaster
 Obsoletes:     python-sphinx = 1.2.3
 %{?python_provide:%python_provide python2-sphinx}
 
@@ -299,28 +300,23 @@ popd
 
 
 %install
-# Must do the python2 install first because the scripts in /usr/bin are
-# overwritten with every setup.py install (and we want the python3 version
+# Must do the python3 install first because the scripts in /usr/bin are
+# overwritten with every setup.py install (and we want the python2 version
 # to be the default for now).
-%py2_install
-for i in sphinx-{apidoc,autogen,build,quickstart}; do
-    mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python2_version}
-    ln -s $i-%{python2_version} %{buildroot}%{_bindir}/$i-2
-%if 0%{?with_python3} == 0
-    ln -s $i-2 %{buildroot}%{_bindir}/$i
-%endif
-done
-
-
 %if 0%{?with_python3}
 %py3_install
 for i in sphinx-{apidoc,autogen,build,quickstart}; do
     mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python3_version}
     ln -s $i-%{python3_version} %{buildroot}%{_bindir}/$i-3
-    ln -s $i-3 %{buildroot}%{_bindir}/$i
 done
 %endif # with_python3
 
+%py2_install
+for i in sphinx-{apidoc,autogen,build,quickstart}; do
+    mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python2_version}
+    ln -s $i-%{python2_version} %{buildroot}%{_bindir}/$i-2
+    ln -s $i-2 %{buildroot}%{_bindir}/$i
+done
 
 pushd doc
 # Deliver man pages
@@ -328,7 +324,7 @@ install -d %{buildroot}%{_mandir}/man1
 mv _build/man/sphinx-*.1 %{buildroot}%{_mandir}/man1/
 for f in %{buildroot}%{_mandir}/man1/sphinx-*.1;
 do
-    cp -p $f $(echo $f | sed -e "s|.1$|-%{python2_version}.1|")
+    cp -p $f $(echo $f | sed -e "s|.1$|-%{python3_version}.1|")
 done
 
 # Remove language files, they're identical to the ones from the
@@ -386,7 +382,14 @@ popd
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
-%{_mandir}/man1/sphinx-*-%{python2_version}.1*
+%exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
+%{_mandir}/man1/*
+
+%{_bindir}/sphinx-apidoc
+%{_bindir}/sphinx-autogen
+%{_bindir}/sphinx-build
+%{_bindir}/sphinx-quickstart
+
 
 %if 0%{?with_python3}
 %files -n python3-sphinx-latex
@@ -401,21 +404,18 @@ popd
 %dir %{_datadir}/sphinx/
 %dir %{_datadir}/sphinx/locale
 %dir %{_datadir}/sphinx/locale/*
-%exclude %{_mandir}/man1/sphinx-*-%{python2_version}.1*
-%{_mandir}/man1/*
+%{_mandir}/man1/sphinx-*-%{python3_version}.1*
 
 %endif # with_python3
-# This part falls into python2- when building without python3
-%{_bindir}/sphinx-apidoc
-%{_bindir}/sphinx-autogen
-%{_bindir}/sphinx-build
-%{_bindir}/sphinx-quickstart
 
 %files doc
 %doc html reST
 
 
 %changelog
+* Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-3
+- Restore using python2 scripts by default (#1285535)
+
 * Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-2
 - Fix requirements of python2- subpackage
 - Provide sphinx-*-{3.5,3} symlinks for each script
