@@ -1,18 +1,21 @@
-diff -up Sphinx-1.2.3/sphinx/builders/linkcheck.py.old Sphinx-1.2.3/sphinx/builders/linkcheck.py
---- Sphinx-1.2.3/sphinx/builders/linkcheck.py.old	2015-10-13 15:15:40.767811124 +0200
-+++ Sphinx-1.2.3/sphinx/builders/linkcheck.py	2015-10-13 15:14:41.916145677 +0200
-@@ -17,7 +17,13 @@ import threading
- from os import path
- from urllib2 import build_opener, unquote, Request, \
-     HTTPError, HTTPRedirectHandler
--from HTMLParser import HTMLParser, HTMLParseError
-+from HTMLParser import HTMLParser
-+
+diff --git Sphinx-1.3.1/sphinx/builders/linkcheck.py~ Sphinx-1.3.1/sphinx/builders/linkcheck.py
+index 9f5c2131c2..71bec0262d 100644
+--- Sphinx-1.3.1/sphinx/builders/linkcheck.py~
++++ Sphinx-1.3.1/sphinx/builders/linkcheck.py
+@@ -19,9 +19,15 @@ from six.moves import queue
+ from six.moves.urllib.request import build_opener, Request, HTTPRedirectHandler
+ from six.moves.urllib.parse import unquote, urlsplit, quote
+ from six.moves.urllib.error import HTTPError
+-from six.moves.html_parser import HTMLParser, HTMLParseError
++from six.moves.html_parser import HTMLParser
+ from docutils import nodes
+ 
 +try:
 +    from HTMLParser import HTMLParseError
 +except ImportError:
 +    class HTMLParseError(Exception):
 +        pass
- 
- from docutils import nodes
- 
++
+ from sphinx.builders import Builder
+ from sphinx.util.console import purple, red, darkgreen, darkgray, \
+     darkred, turquoise

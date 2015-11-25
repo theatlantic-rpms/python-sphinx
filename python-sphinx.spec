@@ -21,6 +21,7 @@ License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx-doc.org/
 Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 Patch0:     Sphinx-1.2.1-mantarget.patch
+Patch1:     html-parser-HTMLParserError-removed.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
@@ -41,6 +42,7 @@ BuildRequires: python-nose
 BuildRequires: gettext
 BuildRequires: texinfo
 BuildRequires: python-sqlalchemy
+BuildRequires: python-mock
 BuildRequires: python-whoosh
 BuildRequires: python2-snowballstemmer
 # note: no Python3 xapian binding yet
@@ -69,6 +71,7 @@ BuildRequires: python3-jinja2
 BuildRequires: python3-pygments
 BuildRequires: python3-nose
 BuildRequires: python3-sqlalchemy
+BuildRequires: python3-mock
 BuildRequires: python3-whoosh
 BuildRequires: python3-snowballstemmer
 BuildRequires: python3-six
@@ -112,6 +115,7 @@ Requires:      python-babel
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
+Requires:      python-mock
 Requires:      python2-snowballstemmer
 Requires:      python2-sphinx_rtd_theme
 Requires:      python-sphinx_rtd_theme
@@ -185,6 +189,7 @@ Requires:      python-babel
 Requires:      python3-docutils
 Requires:      python3-jinja2
 Requires:      python3-pygments
+Requires:      python3-mock
 Requires:      python3-snowballstemmer
 Requires:      python3-sphinx_rtd_theme
 Requires:      python3-sphinx-theme-alabaster
@@ -403,7 +408,7 @@ popd
 
 %changelog
 * Tue Nov 24 2015 Julien Enselme <jujens@jujens.eu> - 1.3.1-1
-- Update to 1.3.1
+- Update to 1.3.1 (#1136284)
 - Update to new guidelines
 - Make the default executable use python3
 
