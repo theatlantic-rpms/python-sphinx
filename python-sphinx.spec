@@ -109,7 +109,7 @@ the Python docs:
       snippets and inclusion of appropriately formatted docstrings.
 
 
-%package -n    python2-%{upstream_name}
+%package -n    python2-sphinx
 Summary:       Python documentation generator
 Requires:      python-babel
 Requires:      python-docutils
@@ -123,9 +123,12 @@ Requires:      python2-sphinx-theme-alabaster
 Obsoletes:     python-sphinx = 1.2.3
 Obsoletes:     python-sphinxcontrib-napoleon < 0.3.0
 Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
+Obsoletes:     python2-Sphinx <= 1.3.1-4
+Provides:      python2-Sphinx = %{version}-%{release}
 %{?python_provide:%python_provide python2-sphinx}
+Conflicts:     python3-sphinx < %{version}-%{release}
 
-%description -n python2-%{upstream_name}
+%description -n python2-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
 beautiful documentation for Python projects (or other documents
 consisting of multiple reStructuredText sources), written by Georg
@@ -199,6 +202,8 @@ Requires:      python3-six
 Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
 Provides:      python3-sphinxcontrib-napoleon = %{version}-%{release}
 %{?python_provide:%python_provide python3-sphinx}
+Conflicts:     python2-Sphinx < %{version}-%{release}
+Conflicts:     python2-sphinx < %{version}-%{release}
 
 %description -n python3-sphinx
 Sphinx is a tool that makes it easy to create intelligent and
@@ -377,7 +382,7 @@ popd
 %files latex
 %license LICENSE
 
-%files -f sphinx.lang -n python2-%{upstream_name}
+%files -f sphinx.lang -n python2-sphinx
 %license LICENSE
 %doc AUTHORS CHANGES EXAMPLES README.rst
 %{_bindir}/sphinx-*-2*
@@ -419,6 +424,9 @@ popd
 %changelog
 * Fri Nov 27 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-4
 - Obsolete napoleon extension, it is now packaged with sphinx (#1286275)
+- Rename python2-Sphinx to python2-sphinx
+- Add conflicts to disallow parallel installation of different versions,
+  which causes file conflicts because of the shared documentation files.
 
 * Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-3
 - Restore using python2 scripts by default (#1285535)
