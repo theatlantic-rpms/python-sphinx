@@ -8,7 +8,7 @@
 
 Name:       python-sphinx
 Version:    1.3.1
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -121,6 +121,8 @@ Requires:      python-sphinx_rtd_theme
 Requires:      python2-six
 Requires:      python2-sphinx-theme-alabaster
 Obsoletes:     python-sphinx = 1.2.3
+Obsoletes:     python-sphinxcontrib-napoleon < 0.3.0
+Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
 %{?python_provide:%python_provide python2-sphinx}
 
 %description -n python2-%{upstream_name}
@@ -194,6 +196,8 @@ Requires:      python3-snowballstemmer
 Requires:      python3-sphinx_rtd_theme
 Requires:      python3-sphinx-theme-alabaster
 Requires:      python3-six
+Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
+Provides:      python3-sphinxcontrib-napoleon = %{version}-%{release}
 %{?python_provide:%python_provide python3-sphinx}
 
 %description -n python3-sphinx
@@ -413,6 +417,9 @@ popd
 
 
 %changelog
+* Fri Nov 27 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-4
+- Obsolete napoleon extension, it is now packaged with sphinx (#1286275)
+
 * Wed Nov 25 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-3
 - Restore using python2 scripts by default (#1285535)
 
