@@ -121,7 +121,7 @@ Requires:      python-sphinx_rtd_theme
 Requires:      python2-six
 Requires:      python2-sphinx-theme-alabaster
 Obsoletes:     python-sphinx = 1.2.3
-Obsoletes:     python-sphinxcontrib-napoleon < 0.3.0
+Obsoletes:     python-sphinxcontrib-napoleon < 0.5
 Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
 Obsoletes:     python2-Sphinx <= 1.3.1-4
 Provides:      python2-Sphinx = %{version}-%{release}
