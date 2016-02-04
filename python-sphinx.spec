@@ -8,7 +8,7 @@
 
 Name:       python-sphinx
 Version:    1.3.1
-Release:    4%{?dist}
+Release:    5%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -422,6 +422,9 @@ popd
 
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.3.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Fri Nov 27 2015 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1.3.1-4
 - Obsolete napoleon extension, it is now packaged with sphinx (#1286275)
 - Rename python2-Sphinx to python2-sphinx
