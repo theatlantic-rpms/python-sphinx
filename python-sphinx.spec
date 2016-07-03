@@ -7,8 +7,8 @@
 %global upstream_name Sphinx
 
 Name:       python-sphinx
-Version:    1.3.1
-Release:    5%{?dist}
+Version:    1.4.4
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -19,20 +19,20 @@ Group:      Development/Tools
 # jquery (MIT or GPLv2)
 License:    BSD and Public Domain and Python and (MIT or GPLv2)
 URL:        http://sphinx-doc.org/
-Source0:    http://pypi.python.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
+Source0:    https://files.pythonhosted.org/packages/source/S/%{upstream_name}/%{upstream_name}-%{version}.tar.gz
 Patch0:     Sphinx-1.2.1-mantarget.patch
-Patch1:     html-parser-HTMLParserError-removed.patch
 
 BuildArch:     noarch
 BuildRequires: python2-devel >= 2.4
-BuildRequires: python-babel
-BuildRequires: python-setuptools
+BuildRequires: python2-babel
+BuildRequires: python2-setuptools
 BuildRequires: python-docutils
 BuildRequires: python-jinja2
 BuildRequires: python-pygments >= 2.0
 BuildRequires: python-six
-BuildRequires: python-sphinx_rtd_theme
+BuildRequires: python2-sphinx_rtd_theme
 BuildRequires: python2-sphinx-theme-alabaster
+BuildRequires: python2-imagesize
 
 # for fixes
 BuildRequires: dos2unix
@@ -41,14 +41,18 @@ BuildRequires: dos2unix
 BuildRequires: python-nose
 BuildRequires: gettext
 BuildRequires: texinfo
+BuildRequires: graphviz
 BuildRequires: python-sqlalchemy
-BuildRequires: python-mock
+BuildRequires: python2-mock
 BuildRequires: python-whoosh
 BuildRequires: python2-snowballstemmer
 # note: no Python3 xapian binding yet
 BuildRequires: xapian-bindings-python
 BuildRequires: texlive-collection-fontsrecommended
 BuildRequires: texlive-collection-latex
+BuildRequires: texlive-dvipng
+BuildRequires: texlive-dvisvgm
+BuildRequires: texlive-ucs
 BuildRequires: tex(cmap.sty)
 BuildRequires: tex(ecrm1000.tfm)
 BuildRequires: tex(fancybox.sty)
@@ -60,7 +64,19 @@ BuildRequires: tex(titlesec.sty)
 BuildRequires: tex(threeparttable.sty)
 BuildRequires: tex(upquote.sty)
 BuildRequires: tex(wrapfig.sty)
-
+BuildRequires: tex(capt-of.sty)
+BuildRequires: tex(needspace.sty)
+BuildRequires: tex(eqparbox.sty)
+BuildRequires: tex(amsmath.sty)
+BuildRequires: tex(amsthm.sty)
+BuildRequires: tex(amssymb.sty)
+BuildRequires: tex(amsfonts.sty)
+BuildRequires: tex(bm.sty)
+BuildRequires: tex(palatino.sty)
+BuildRequires: tex(multirow.sty)
+BuildRequires: tex(eqparbox.sty)
+BuildRequires: tex(atbegshi.sty)
+BuildRequires: tex(anyfontsize.sty)
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -77,6 +93,7 @@ BuildRequires: python3-snowballstemmer
 BuildRequires: python3-six
 BuildRequires: python3-sphinx_rtd_theme
 BuildRequires: python3-sphinx-theme-alabaster
+BuildRequires: python3-imagesize
 %endif # with_python3
 
 
@@ -111,16 +128,19 @@ the Python docs:
 
 %package -n    python2-sphinx
 Summary:       Python documentation generator
-Requires:      python-babel
+Requires:      python-sphinx-locale = %{version}-%{release}
+Requires:      python2-babel
 Requires:      python-docutils
 Requires:      python-jinja2
 Requires:      python-pygments
-Requires:      python-mock
+Requires:      python2-mock
 Requires:      python2-snowballstemmer
-Requires:      python-sphinx_rtd_theme
+Requires:      python2-sphinx_rtd_theme
 Requires:      python2-six
 Requires:      python2-sphinx-theme-alabaster
-Obsoletes:     python-sphinx = 1.2.3
+Requires:      python2-imagesize
+Requires:      graphviz
+Obsoletes:     python-sphinx <= 1.2.3
 Obsoletes:     python-sphinxcontrib-napoleon < 0.5
 Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
 Obsoletes:     python2-Sphinx <= 1.3.1-4
@@ -162,6 +182,9 @@ Summary:       LaTeX builder dependencies for %{name}
 Requires:      %{name} = %{version}-%{release}
 Requires:      texlive-collection-fontsrecommended
 Requires:      texlive-collection-latex
+Requires:      texlive-dvipng
+Requires:      texlive-dvisvgm
+Requires:      texlive-ucs
 Requires:      tex(cmap.sty)
 Requires:      tex(ecrm1000.tfm)
 Requires:      tex(fancybox.sty)
@@ -173,6 +196,20 @@ Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
 Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
+Requires:      tex(capt-of.sty)
+Requires:      tex(needspace.sty)
+Requires:      tex(eqparbox.sty)
+Requires:      tex(amsmath.sty)
+Requires:      tex(amsthm.sty)
+Requires:      tex(amssymb.sty)
+Requires:      tex(amsfonts.sty)
+Requires:      tex(bm.sty)
+Requires:      tex(palatino.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(eqparbox.sty)
+Requires:      tex(atbegshi.sty)
+Requires:      tex(anyfontsize.sty)
+
 
 %description latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -190,6 +227,7 @@ builder.
 %package -n python3-sphinx
 Summary:       Python documentation generator
 Group:         Development/Tools
+Requires:      python-sphinx-locale = %{version}-%{release}
 Requires:      python3-babel
 Requires:      python3-docutils
 Requires:      python3-jinja2
@@ -198,7 +236,9 @@ Requires:      python3-mock
 Requires:      python3-snowballstemmer
 Requires:      python3-sphinx_rtd_theme
 Requires:      python3-sphinx-theme-alabaster
+Requires:      python3-imagesize
 Requires:      python3-six
+Requires:      graphviz
 Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
 Provides:      python3-sphinxcontrib-napoleon = %{version}-%{release}
 %{?python_provide:%python_provide python3-sphinx}
@@ -238,6 +278,9 @@ Summary:       LaTeX builder dependencies for %{name}
 Requires:      python3-sphinx = %{version}-%{release}
 Requires:      texlive-collection-fontsrecommended
 Requires:      texlive-collection-latex
+Requires:      texlive-dvipng
+Requires:      texlive-dvisvgm
+Requires:      texlive-ucs
 Requires:      tex(cmap.sty)
 Requires:      tex(ecrm1000.tfm)
 Requires:      tex(fancybox.sty)
@@ -249,6 +292,19 @@ Requires:      tex(titlesec.sty)
 Requires:      tex(threeparttable.sty)
 Requires:      tex(upquote.sty)
 Requires:      tex(wrapfig.sty)
+Requires:      tex(capt-of.sty)
+Requires:      tex(needspace.sty)
+Requires:      tex(eqparbox.sty)
+Requires:      tex(amsmath.sty)
+Requires:      tex(amsthm.sty)
+Requires:      tex(amssymb.sty)
+Requires:      tex(amsfonts.sty)
+Requires:      tex(bm.sty)
+Requires:      tex(palatino.sty)
+Requires:      tex(multirow.sty)
+Requires:      tex(eqparbox.sty)
+Requires:      tex(atbegshi.sty)
+Requires:      tex(anyfontsize.sty)
 
 %description -n python3-sphinx-latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -264,10 +320,10 @@ builder.
 
 
 %package doc
-Summary:    Documentation for %{name}
-Group:      Documentation
-License:    BSD
-Requires:   %{name} = %{version}-%{release}
+Summary:       Documentation for %{name}
+Group:         Documentation
+License:       BSD
+Requires:      %{name} = %{version}-%{release}
 
 %description doc
 Sphinx is a tool that makes it easy to create intelligent and
@@ -279,6 +335,22 @@ useful to many other projects.
 
 This package contains documentation in reST and HTML formats.
 
+
+%package locale
+Summary:       Locale files for %{name}
+Group:         Development/Tools
+License:       BSD
+Requires:      %{name} = %{version}-%{release}
+
+%description locale
+Sphinx is a tool that makes it easy to create intelligent and
+beautiful documentation for Python projects (or other documents
+consisting of multiple reStructuredText sources), written by Georg
+Brandl. It was originally created to translate the new Python
+documentation, but has now been cleaned up in the hope that it will be
+useful to many other projects.
+
+This package contains locale files for Sphinx
 
 %prep
 %autosetup -n %{upstream_name}-%{version}%{?prerel} -p1
@@ -382,15 +454,18 @@ popd
 %files latex
 %license LICENSE
 
-%files -f sphinx.lang -n python2-sphinx
+%files locale -f sphinx.lang
+%license LICENSE
+%dir %{_datadir}/sphinx/
+%dir %{_datadir}/sphinx/locale
+%dir %{_datadir}/sphinx/locale/*
+
+%files -n python2-sphinx
 %license LICENSE
 %doc AUTHORS CHANGES EXAMPLES README.rst
 %{_bindir}/sphinx-*-2*
 %{python2_sitelib}/sphinx/
 %{python2_sitelib}/Sphinx-%{version}-py%{python2_version}.egg-info/
-%dir %{_datadir}/sphinx/
-%dir %{_datadir}/sphinx/locale
-%dir %{_datadir}/sphinx/locale/*
 %exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 %{_mandir}/man1/*
 
@@ -404,15 +479,12 @@ popd
 %files -n python3-sphinx-latex
 %license LICENSE
 
-%files -n python3-sphinx -f sphinx.lang
+%files -n python3-sphinx
 %license LICENSE
 %doc AUTHORS CHANGES EXAMPLES README.rst
 %{_bindir}/sphinx-*-3*
 %{python3_sitelib}/sphinx/
 %{python3_sitelib}/Sphinx-%{version}-py%{python3_version}.egg-info/
-%dir %{_datadir}/sphinx/
-%dir %{_datadir}/sphinx/locale
-%dir %{_datadir}/sphinx/locale/*
 %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 
 %endif # with_python3
@@ -422,6 +494,10 @@ popd
 
 
 %changelog
+* Sun Jun 12 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.4-1
+- Updated to 1.4.4
+- Added python-sphinx-locale for common locale files
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.3.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
@@ -641,3 +717,4 @@ Resolves: #1098109
 
 * Thu Mar 27 2008 Michel Salim <michel.sylvan@gmail.com> 0.1.61950-1
 - Initial package
+
