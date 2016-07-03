@@ -8,7 +8,7 @@
 
 Name:       python-sphinx
 Version:    1.4.4
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -145,6 +145,7 @@ Obsoletes:     python-sphinxcontrib-napoleon < 0.5
 Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
 Obsoletes:     python2-Sphinx <= 1.3.1-4
 Provides:      python2-Sphinx = %{version}-%{release}
+Provides:      python(Sphinx) = %{version}-%{release}
 %{?python_provide:%python_provide python2-sphinx}
 Conflicts:     python3-sphinx < %{version}-%{release}
 
@@ -179,7 +180,8 @@ the Python docs:
 
 %package latex
 Summary:       LaTeX builder dependencies for %{name}
-Requires:      %{name} = %{version}-%{release}
+Requires:      python(Sphinx) = %{version}-%{release}
+Recommends:    %{name} = %{version}-%{release}
 Requires:      texlive-collection-fontsrecommended
 Requires:      texlive-collection-latex
 Requires:      texlive-dvipng
@@ -209,7 +211,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(eqparbox.sty)
 Requires:      tex(atbegshi.sty)
 Requires:      tex(anyfontsize.sty)
-
+Obsoletes:     python3-sphinx-latex
 
 %description latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -241,6 +243,7 @@ Requires:      python3-six
 Requires:      graphviz
 Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
 Provides:      python3-sphinxcontrib-napoleon = %{version}-%{release}
+Provides:      python(Sphinx) = %{version}-%{release}
 %{?python_provide:%python_provide python3-sphinx}
 Conflicts:     python2-Sphinx < %{version}-%{release}
 Conflicts:     python2-sphinx < %{version}-%{release}
@@ -272,50 +275,6 @@ the Python docs:
     * Code handling: automatic highlighting using the Pygments highlighter
     * Various extensions are available, e.g. for automatic testing of
       snippets and inclusion of appropriately formatted docstrings.
-
-%package -n python3-sphinx-latex
-Summary:       LaTeX builder dependencies for %{name}
-Requires:      python3-sphinx = %{version}-%{release}
-Requires:      texlive-collection-fontsrecommended
-Requires:      texlive-collection-latex
-Requires:      texlive-dvipng
-Requires:      texlive-dvisvgm
-Requires:      texlive-ucs
-Requires:      tex(cmap.sty)
-Requires:      tex(ecrm1000.tfm)
-Requires:      tex(fancybox.sty)
-Requires:      tex(footnote.sty)
-Requires:      tex(framed.sty)
-Requires:      tex(multirow.sty)
-Requires:      tex(parskip.sty)
-Requires:      tex(titlesec.sty)
-Requires:      tex(threeparttable.sty)
-Requires:      tex(upquote.sty)
-Requires:      tex(wrapfig.sty)
-Requires:      tex(capt-of.sty)
-Requires:      tex(needspace.sty)
-Requires:      tex(eqparbox.sty)
-Requires:      tex(amsmath.sty)
-Requires:      tex(amsthm.sty)
-Requires:      tex(amssymb.sty)
-Requires:      tex(amsfonts.sty)
-Requires:      tex(bm.sty)
-Requires:      tex(palatino.sty)
-Requires:      tex(multirow.sty)
-Requires:      tex(eqparbox.sty)
-Requires:      tex(atbegshi.sty)
-Requires:      tex(anyfontsize.sty)
-
-%description -n python3-sphinx-latex
-Sphinx is a tool that makes it easy to create intelligent and
-beautiful documentation for Python projects (or other documents
-consisting of multiple reStructuredText sources), written by Georg
-Brandl. It was originally created to translate the new Python
-documentation, but has now been cleaned up in the hope that it will be
-useful to many other projects.
-
-This package pulls in the TeX dependencies needed by Sphinx's LaTeX
-builder.
 %endif # with_python3
 
 
@@ -323,7 +282,8 @@ builder.
 Summary:       Documentation for %{name}
 Group:         Documentation
 License:       BSD
-Requires:      %{name} = %{version}-%{release}
+Requires:      python(Sphinx) = %{version}-%{release}
+Recommends:    %{name} = %{version}-%{release}
 
 %description doc
 Sphinx is a tool that makes it easy to create intelligent and
@@ -340,7 +300,8 @@ This package contains documentation in reST and HTML formats.
 Summary:       Locale files for %{name}
 Group:         Development/Tools
 License:       BSD
-Requires:      %{name} = %{version}-%{release}
+Requires:      python(Sphinx) = %{version}-%{release}
+Recommends:    %{name} = %{version}-%{release}
 
 %description locale
 Sphinx is a tool that makes it easy to create intelligent and
@@ -476,8 +437,6 @@ popd
 
 
 %if 0%{?with_python3}
-%files -n python3-sphinx-latex
-%license LICENSE
 
 %files -n python3-sphinx
 %license LICENSE
@@ -494,6 +453,10 @@ popd
 
 
 %changelog
+* Sun Jul 03 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.4-2
+- doc and locale no longer specifically require python2-sphinx
+- Colapsed python3-sphinx-latex into python-latex
+
 * Sun Jun 12 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.4-1
 - Updated to 1.4.4
 - Added python-sphinx-locale for common locale files
@@ -717,4 +680,3 @@ Resolves: #1098109
 
 * Thu Mar 27 2008 Michel Salim <michel.sylvan@gmail.com> 0.1.61950-1
 - Initial package
-
