@@ -6,9 +6,15 @@
 
 %global upstream_name Sphinx
 
+%if 0%{?fedora} > 24
+%global py3_alt_priority 500
+%else
+%global py3_alt_priority 10
+%endif
+
 Name:       python-sphinx
-Version:    1.4.4
-Release:    2%{?dist}
+Version:    1.4.5
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -139,7 +145,9 @@ Requires:      python2-sphinx_rtd_theme
 Requires:      python2-six
 Requires:      python2-sphinx-theme-alabaster
 Requires:      python2-imagesize
-Requires:      graphviz
+Recommends:    graphviz
+Requires(post): %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
 Obsoletes:     python-sphinx <= 1.2.3
 Obsoletes:     python-sphinxcontrib-napoleon < 0.5
 Provides:      python-sphinxcontrib-napoleon = %{version}-%{release}
@@ -181,7 +189,6 @@ the Python docs:
 %package latex
 Summary:       LaTeX builder dependencies for %{name}
 Requires:      python(Sphinx) = %{version}-%{release}
-Recommends:    %{name} = %{version}-%{release}
 Requires:      texlive-collection-fontsrecommended
 Requires:      texlive-collection-latex
 Requires:      texlive-dvipng
@@ -240,7 +247,9 @@ Requires:      python3-sphinx_rtd_theme
 Requires:      python3-sphinx-theme-alabaster
 Requires:      python3-imagesize
 Requires:      python3-six
-Requires:      graphviz
+Recommends:    graphviz
+Requires(post): %{_sbindir}/update-alternatives
+Requires(postun): %{_sbindir}/update-alternatives
 Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
 Provides:      python3-sphinxcontrib-napoleon = %{version}-%{release}
 Provides:      python(Sphinx) = %{version}-%{release}
@@ -283,7 +292,6 @@ Summary:       Documentation for %{name}
 Group:         Documentation
 License:       BSD
 Requires:      python(Sphinx) = %{version}-%{release}
-Recommends:    %{name} = %{version}-%{release}
 
 %description doc
 Sphinx is a tool that makes it easy to create intelligent and
@@ -300,8 +308,6 @@ This package contains documentation in reST and HTML formats.
 Summary:       Locale files for %{name}
 Group:         Development/Tools
 License:       BSD
-Requires:      python(Sphinx) = %{version}-%{release}
-Recommends:    %{name} = %{version}-%{release}
 
 %description locale
 Sphinx is a tool that makes it easy to create intelligent and
@@ -342,9 +348,6 @@ popd
 
 
 %install
-# Must do the python3 install first because the scripts in /usr/bin are
-# overwritten with every setup.py install (and we want the python2 version
-# to be the default for now).
 %if 0%{?with_python3}
 %py3_install
 for i in sphinx-{apidoc,autogen,build,quickstart}; do
@@ -357,7 +360,10 @@ done
 for i in sphinx-{apidoc,autogen,build,quickstart}; do
     mv %{buildroot}%{_bindir}/$i %{buildroot}%{_bindir}/$i-%{python2_version}
     ln -s $i-%{python2_version} %{buildroot}%{_bindir}/$i-2
-    ln -s $i-2 %{buildroot}%{_bindir}/$i
+done
+
+for i in sphinx-{apidoc,autogen,build,quickstart}; do
+    touch %{buildroot}%{_bindir}/$i
 done
 
 pushd doc
@@ -411,6 +417,33 @@ LANG=en_US.UTF-8 PYTHON=python3 make test
 popd
 %endif # with_python3
 
+%post -n python2-sphinx
+%{_sbindir}/update-alternatives --install %{_bindir}/sphinx-build \
+  sphinx-build %{_bindir}/sphinx-build-%{python2_version} 100 \
+  --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python2_version} \
+  --slave %{_bindir}/sphinx-autogen sphinx-autogen %{_bindir}/sphinx-autogen-%{python2_version} \
+  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python2_version}
+
+%if 0%{?with_python3}
+%post -n python3-sphinx
+%{_sbindir}/update-alternatives --install %{_bindir}/sphinx-build \
+  sphinx-build %{_bindir}/sphinx-build-%{python3_version} %{py3_alt_priority} \
+  --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python3_version} \
+  --slave %{_bindir}/sphinx-autogen sphinx-autogen %{_bindir}/sphinx-autogen-%{python3_version} \
+  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python3_version}
+%endif # with_python3
+
+%postun -n python2-sphinx
+if [ $1 -eq 0 ] ; then
+  %{_sbindir}/update-alternatives --remove sphinx-build %{_bindir}/sphinx-build-%{python2_version}
+fi
+
+%if 0%{?with_python3}
+%postun -n python3-sphinx
+if [ $1 -eq 0 ] ; then
+  %{_sbindir}/update-alternatives --remove sphinx-build %{_bindir}/sphinx-build-%{python3_version}
+fi
+%endif # with_python3
 
 %files latex
 %license LICENSE
@@ -430,11 +463,10 @@ popd
 %exclude %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 %{_mandir}/man1/*
 
-%{_bindir}/sphinx-apidoc
-%{_bindir}/sphinx-autogen
-%{_bindir}/sphinx-build
-%{_bindir}/sphinx-quickstart
-
+%ghost %{_bindir}/sphinx-apidoc
+%ghost %{_bindir}/sphinx-autogen
+%ghost %{_bindir}/sphinx-build
+%ghost %{_bindir}/sphinx-quickstart
 
 %if 0%{?with_python3}
 
@@ -446,6 +478,11 @@ popd
 %{python3_sitelib}/Sphinx-%{version}-py%{python3_version}.egg-info/
 %{_mandir}/man1/sphinx-*-%{python3_version}.1*
 
+%ghost %{_bindir}/sphinx-apidoc
+%ghost %{_bindir}/sphinx-autogen
+%ghost %{_bindir}/sphinx-build
+%ghost %{_bindir}/sphinx-quickstart
+
 %endif # with_python3
 
 %files doc
@@ -453,6 +490,13 @@ popd
 
 
 %changelog
+* Fri Aug 12 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.5-1
+- Update to 1.4.5 (bz#1356336)
+- Remove Recommends for latex, locale, and doc subpackages (bz#1366624)
+- Remove Requires from locale subpackage (bz#1366624)
+- Set executable scripts via alternatives  (bz#1321413)
+- Change graphviz Requires to Recommends (bz#1366706)
+
 * Sun Jul 03 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.4-2
 - doc and locale no longer specifically require python2-sphinx
 - Colapsed python3-sphinx-latex into python-latex
