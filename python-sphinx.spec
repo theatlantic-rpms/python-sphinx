@@ -13,7 +13,7 @@
 %endif
 
 Name:       python-sphinx
-Version:    1.4.5
+Version:    1.4.6
 Release:    1%{?dist}
 Summary:    Python documentation generator
 
@@ -218,7 +218,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(eqparbox.sty)
 Requires:      tex(atbegshi.sty)
 Requires:      tex(anyfontsize.sty)
-Obsoletes:     python3-sphinx-latex
+Obsoletes:     python3-sphinx-latex < 1.4.4-2
 
 %description latex
 Sphinx is a tool that makes it easy to create intelligent and
@@ -369,10 +369,10 @@ done
 pushd doc
 # Deliver man pages
 install -d %{buildroot}%{_mandir}/man1
-mv _build/man/sphinx-*.1 %{buildroot}%{_mandir}/man1/
-for f in %{buildroot}%{_mandir}/man1/sphinx-*.1;
+for f in _build/man/sphinx-*.1;
 do
-    cp -p $f $(echo $f | sed -e "s|.1$|-%{python3_version}.1|")
+    cp -p $f %{buildroot}%{_mandir}/man1/$(basename $f | sed -e "s|.1$|-%{python2_version}.1|")
+    cp -p $f %{buildroot}%{_mandir}/man1/$(basename $f | sed -e "s|.1$|-%{python3_version}.1|")
 done
 
 # Remove language files, they're identical to the ones from the
@@ -422,7 +422,11 @@ popd
   sphinx-build %{_bindir}/sphinx-build-%{python2_version} 100 \
   --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python2_version} \
   --slave %{_bindir}/sphinx-autogen sphinx-autogen %{_bindir}/sphinx-autogen-%{python2_version} \
-  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python2_version}
+  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python2_version} \
+  --slave %{_mandir}/man1/sphinx-all.1.gz sphinx-all.1.gz %{_mandir}/man1/sphinx-all-%{python2_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-apidoc.1.gz sphinx-apidoc.1.gz %{_mandir}/man1/sphinx-apidoc-%{python2_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-build.1.gz sphinx-build.1.gz %{_mandir}/man1/sphinx-build-%{python2_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-quickstart.1.gz sphinx-quickstart.1.gz %{_mandir}/man1/sphinx-quickstart-%{python2_version}.1.gz
 
 %if 0%{?with_python3}
 %post -n python3-sphinx
@@ -430,7 +434,11 @@ popd
   sphinx-build %{_bindir}/sphinx-build-%{python3_version} %{py3_alt_priority} \
   --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python3_version} \
   --slave %{_bindir}/sphinx-autogen sphinx-autogen %{_bindir}/sphinx-autogen-%{python3_version} \
-  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python3_version}
+  --slave %{_bindir}/sphinx-quickstart sphinx-quickstart %{_bindir}/sphinx-quickstart-%{python3_version} \
+  --slave %{_mandir}/man1/sphinx-all.1.gz sphinx-all.1.gz %{_mandir}/man1/sphinx-all-%{python3_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-apidoc.1.gz sphinx-apidoc.1.gz %{_mandir}/man1/sphinx-apidoc-%{python3_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-build.1.gz sphinx-build.1.gz %{_mandir}/man1/sphinx-build-%{python3_version}.1.gz \
+  --slave %{_mandir}/man1/sphinx-quickstart.1.gz sphinx-quickstart.1.gz %{_mandir}/man1/sphinx-quickstart-%{python3_version}.1.gz
 %endif # with_python3
 
 %postun -n python2-sphinx
@@ -467,7 +475,10 @@ fi
 %ghost %{_bindir}/sphinx-autogen
 %ghost %{_bindir}/sphinx-build
 %ghost %{_bindir}/sphinx-quickstart
-
+%ghost %{_mandir}/man1/sphinx-all.1.gz
+%ghost %{_mandir}/man1/sphinx-apidoc.1.gz
+%ghost %{_mandir}/man1/sphinx-build.1.gz
+%ghost %{_mandir}/man1/sphinx-quickstart.1.gz
 %if 0%{?with_python3}
 
 %files -n python3-sphinx
@@ -482,6 +493,10 @@ fi
 %ghost %{_bindir}/sphinx-autogen
 %ghost %{_bindir}/sphinx-build
 %ghost %{_bindir}/sphinx-quickstart
+%ghost %{_mandir}/man1/sphinx-all.1.gz
+%ghost %{_mandir}/man1/sphinx-apidoc.1.gz
+%ghost %{_mandir}/man1/sphinx-build.1.gz
+%ghost %{_mandir}/man1/sphinx-quickstart.1.gz
 
 %endif # with_python3
 
@@ -490,6 +505,11 @@ fi
 
 
 %changelog
+* Fri Sep 2 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.6-1
+- Update to 1.4.6 (bz#1370810)
+- Fix unversioned Obsoletes
+- Add alternatives slaves for man pages
+
 * Fri Aug 12 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.5-1
 - Update to 1.4.5 (bz#1356336)
 - Remove Recommends for latex, locale, and doc subpackages (bz#1366624)
