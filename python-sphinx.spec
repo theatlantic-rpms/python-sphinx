@@ -14,7 +14,7 @@
 
 Name:       python-sphinx
 Version:    1.4.6
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -418,6 +418,16 @@ popd
 %endif # with_python3
 
 %post -n python2-sphinx
+
+# Remove old versions of man pages so alternatives doesn't break
+for manpage in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz
+do
+    if [ ! -L $manpage ]
+    then
+        rm -f $manpage
+    fi
+done
+
 %{_sbindir}/update-alternatives --install %{_bindir}/sphinx-build \
   sphinx-build %{_bindir}/sphinx-build-%{python2_version} 100 \
   --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python2_version} \
@@ -430,6 +440,16 @@ popd
 
 %if 0%{?with_python3}
 %post -n python3-sphinx
+
+# Remove old versions of man pages so alternatives doesn't break
+for manpage in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz
+do
+    if [ ! -L $manpage ]
+    then
+        rm -f $manpage
+    fi
+done
+
 %{_sbindir}/update-alternatives --install %{_bindir}/sphinx-build \
   sphinx-build %{_bindir}/sphinx-build-%{python3_version} %{py3_alt_priority} \
   --slave %{_bindir}/sphinx-apidoc sphinx-apidoc %{_bindir}/sphinx-apidoc-%{python3_version} \
@@ -505,6 +525,9 @@ fi
 
 
 %changelog
+* Sun Sep 4 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.6-2
+- Alternatives fails for man pages due to existing files
+
 * Fri Sep 2 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.6-1
 - Update to 1.4.6 (bz#1370810)
 - Fix unversioned Obsoletes
