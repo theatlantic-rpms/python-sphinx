@@ -13,8 +13,8 @@
 %endif
 
 Name:       python-sphinx
-Version:    1.4.6
-Release:    2%{?dist}
+Version:    1.4.8
+Release:    1%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -419,12 +419,12 @@ popd
 
 %post -n python2-sphinx
 
-# Remove old versions of man pages so alternatives doesn't break
-for manpage in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz
+# Remove old versions of files so alternatives doesn't break
+for filename in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz %{_bindir}/sphinx-{build,apidoc,autogen,quickstart}
 do
-    if [ ! -L $manpage ]
+    if [ ! -L $filename ]
     then
-        rm -f $manpage
+        rm -f $filename
     fi
 done
 
@@ -441,12 +441,12 @@ done
 %if 0%{?with_python3}
 %post -n python3-sphinx
 
-# Remove old versions of man pages so alternatives doesn't break
-for manpage in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz
+# Remove old versions of files so alternatives doesn't break
+for filename in %{_mandir}/man1/sphinx-{all,apidoc,build,quickstart}.1.gz %{_bindir}/sphinx-{build,apidoc,autogen,quickstart}
 do
-    if [ ! -L $manpage ]
+    if [ ! -L $filename ]
     then
-        rm -f $manpage
+        rm -f $filename
     fi
 done
 
@@ -525,6 +525,10 @@ fi
 
 
 %changelog
+* Thu Oct 6 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.8-1
+- Update to 1.4.8
+- Alternatives fails for scripts sometimes (bz#1382405)
+
 * Sun Sep 4 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.6-2
 - Alternatives fails for man pages due to existing files
 
