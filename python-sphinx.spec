@@ -14,7 +14,7 @@
 
 Name:       python-sphinx
 Version:    1.4.8
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Python documentation generator
 
 Group:      Development/Tools
@@ -83,6 +83,7 @@ BuildRequires: tex(multirow.sty)
 BuildRequires: tex(eqparbox.sty)
 BuildRequires: tex(atbegshi.sty)
 BuildRequires: tex(anyfontsize.sty)
+BuildRequires: tex(luatex85.sty)
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -218,6 +219,7 @@ Requires:      tex(multirow.sty)
 Requires:      tex(eqparbox.sty)
 Requires:      tex(atbegshi.sty)
 Requires:      tex(anyfontsize.sty)
+Requires:      tex(luatex85.sty)
 Obsoletes:     python3-sphinx-latex < 1.4.4-2
 
 %description latex
@@ -525,6 +527,9 @@ fi
 
 
 %changelog
+* Thu Oct 6 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.8-2
+- Added tex(luatex85.sty) dependency to support TexLive 2016
+
 * Thu Oct 6 2016 Avram Lubkin <aviso@fedoraproject.org> - 1.4.8-1
 - Update to 1.4.8
 - Alternatives fails for scripts sometimes (bz#1382405)
