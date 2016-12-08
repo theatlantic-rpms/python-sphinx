@@ -12,6 +12,8 @@
 %global py3_alt_priority 10
 %endif
 
+%bcond_with latex
+
 Name:       python-sphinx
 Version:    1.4.8
 Release:    2%{?dist}
@@ -46,7 +48,6 @@ BuildRequires: dos2unix
 # for testing
 BuildRequires: python-nose
 BuildRequires: gettext
-BuildRequires: texinfo
 BuildRequires: graphviz
 BuildRequires: python-sqlalchemy
 BuildRequires: python2-mock
@@ -54,6 +55,8 @@ BuildRequires: python-whoosh
 BuildRequires: python2-snowballstemmer
 # note: no Python3 xapian binding yet
 BuildRequires: xapian-bindings-python
+%if %{with latex}
+BuildRequires: texinfo
 BuildRequires: texlive-collection-fontsrecommended
 BuildRequires: texlive-collection-latex
 BuildRequires: texlive-dvipng
@@ -84,6 +87,7 @@ BuildRequires: tex(eqparbox.sty)
 BuildRequires: tex(atbegshi.sty)
 BuildRequires: tex(anyfontsize.sty)
 BuildRequires: tex(luatex85.sty)
+%endif  # with latex
 
 %if 0%{?with_python3}
 BuildRequires: python3-devel
@@ -146,7 +150,6 @@ Requires:      python2-sphinx_rtd_theme
 Requires:      python2-six
 Requires:      python2-sphinx-theme-alabaster
 Requires:      python2-imagesize
-Recommends:    graphviz
 Requires(post): %{_sbindir}/update-alternatives
 Requires(postun): %{_sbindir}/update-alternatives
 Obsoletes:     python-sphinx <= 1.2.3
@@ -187,6 +190,7 @@ the Python docs:
       snippets and inclusion of appropriately formatted docstrings.
 
 
+%if %{with latex}
 %package latex
 Summary:       LaTeX builder dependencies for %{name}
 Requires:      python(Sphinx) = %{version}-%{release}
@@ -232,7 +236,7 @@ useful to many other projects.
 
 This package pulls in the TeX dependencies needed by Sphinx's LaTeX
 builder.
-
+%endif  # with latex
 
 %if 0%{?with_python3}
 %package -n python3-sphinx
@@ -249,7 +253,6 @@ Requires:      python3-sphinx_rtd_theme
 Requires:      python3-sphinx-theme-alabaster
 Requires:      python3-imagesize
 Requires:      python3-six
-Recommends:    graphviz
 Requires(post): %{_sbindir}/update-alternatives
 Requires(postun): %{_sbindir}/update-alternatives
 Obsoletes:     python3-sphinxcontrib-napoleon < 0.3.0
@@ -475,8 +478,10 @@ if [ $1 -eq 0 ] ; then
 fi
 %endif # with_python3
 
+%if %{with latex}
 %files latex
 %license LICENSE
+%endif
 
 %files locale -f sphinx.lang
 %license LICENSE
